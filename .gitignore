@@ -1,0 +1,39 @@
+# Python cache
+
+**pycache**/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+
+venv/
+.env/
+.env.*
+
+# Environment variables
+
+*.env
+
+# IDE / Editor
+
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+
+.DS_Store
+Thumbs.db
+
+# Logs
+
+*.log
+
+# Temporary files
+
+*.tmp
+*.swp
+
+
+seats_by_model.py

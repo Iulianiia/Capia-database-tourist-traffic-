@@ -1,0 +1,441 @@
+IATA code,New margin to noise certification limit,Remark
+NDC,21.80,
+AGH,,Helicopter
+AWH,,Helicopter
+AW6,,Helicopter
+AW8,,Helicopter
+221,28.07,
+223,26.58,
+AB6,12.57,
+AB4,6.72,
+ABY,13.10,
+ABB,14.35,
+AB4,6.72,
+312,11.28,
+313,13.83,
+312,11.28,
+313,13.83,
+318,19.74,
+318,19.74,
+319,18.39,
+31B,19.26,
+31N,30.48,
+320,16.39,
+32A,17.98,
+32N,29.77,
+321,11.12,
+32B,13.61,
+32Q,24.79,
+320,16.39,
+321,11.12,
+332,14.18,
+333,14.96,
+338,26.09,
+339,25.45,
+33X,16.25,
+333,14.96,
+33B,17.90,
+342,22.99,
+343,22.67,
+345,23.23,
+346,23.41,
+358,,Development suspended
+359,32.63,
+351,26.67,
+388,28.38,
+388,28.38,
+AI4,12.40,
+NDH,,Helicopter
+MBH,,Helicopter
+NDE,,Helicopter
+EC3,,Helicopter
+EC4,,Helicopter
+EC5,,Helicopter
+H16,,Helicopter
+EC7,,Helicopter
+APH,,Helicopter
+L4T,25.03,
+L4T,25.03,
+AFA,,Not in database
+ANF,8.90,
+A22,,Military
+AN4,6.98,
+A26,1.10,
+A30,12.50,
+A32,9.83,
+A28,,Not in database
+A38,22.30,
+AN7,3.48,
+A4F,1.28,
+A40,13.73,
+A81,12.82,
+A58,10.70,
+A78,,Military
+A5F,3.90,
+AT4,23.00,
+AT7,14.60,
+AT4,23.00,
+AT7,14.60,
+AR1,16.65,
+AR7,18.60,
+AR8,18.19,
+ATP,22.22,
+ATP,22.22,
+B12,8.52,
+B13,4.85,
+B14,4.38,
+B15,2.87,
+DHD,,Light aircraft
+DHH,DHH,Light aircraft
+HS7,5.72,
+141,20.84,
+142,18.12,
+143,17.60,
+141,20.84,
+142,18.12,
+143,17.60,
+J31,,Not in database
+J32,,Not in database
+J41,22.92,
+BH2,,Helicopter
+B72,,Not in database
+703,,Not in database
+70M,,Not in database
+70F,,Not in database
+717,20.83,
+721,,Not in database
+722,1.31,
+722,1.31,
+72B,,Not in database
+722,1.31,
+72X,,Not in database
+72Y,2.40,
+731,,Not in database
+732,1.21,
+733,12.58,
+733,12.58,
+734,11.75,
+735,14.01,
+735,14.01,
+736,16.79,
+73G,15.05,
+73G,15.05,
+73G,15.05,
+738,13.58,
+738,13.58,
+738,13.58,
+739,13.09,
+739,13.09,
+739,13.09,
+7M7,,"New type, no data available yet"
+7M8,25.76,
+7M9,25.01,
+7M1,,"New type, no data available yet"
+732,1.21,
+733,12.58,
+734,11.75,
+73G,15.05,
+732,1.21,
+733,12.58,
+734,11.75,
+73G,15.05,
+73G,15.05,
+738,13.58,
+7F8,13.94,
+738,13.58,
+741,7.60,
+742,5.94,
+743,7.53,
+744,14.48,
+744,14.48,
+74H,28.04,
+74L,3.55,
+74L,3.55,
+742,5.94,
+743,7.53,
+744,14.48,
+741,7.60,
+742,5.94,
+743,7.53,
+744,14.48,
+744,14.48,
+74H,28.04,
+74L,3.55,
+752,17.63,
+752,17.63,
+753,17.56,
+753,17.56,
+752,17.63,
+752,17.63,
+752,17.63,
+762,14.51,
+763,15.52,
+763,15.52,
+764,17.05,
+762,14.51,
+76Y,17.60,
+76Y,17.60,
+779,,Not in database
+772,19.29,
+772,19.29,
+773,17.05,
+77W,17.10,
+77X,18.14,
+788,29.46,
+789,28.96,
+781,29.44,
+C17,,Military
+D11,4.72,
+D1C,5.18,
+D11,4.72,
+D1Y,5.18,
+D1Y,5.18,
+DC3,,Not in database
+D3F,,Not in database
+DC4,,Not in database
+D6F,,Not in database
+DC6,,Not in database
+D8L,,Not in database
+D8Q,17.50,
+D8T,,Not in database
+D8X,,Not in database
+D8Q,17.50,
+D8M,,Not in database
+D91,,Not in database
+D92,,Not in database
+D93,,Not in database
+D94,,Not in database
+D95,,Not in database
+D9X,,Not in database
+D9C,,Not in database
+D9D,,Not in database
+M11,14.49,
+M11,14.49,
+M11,14.49,
+M81,11.83,
+M82,11.32,
+M83,11.48,
+M87,10.89,
+M88,11.92,
+M82,11.32,
+M83,11.48,
+M88,11.92,
+M90,24.86,
+CCX,22.75,
+CL3,27.73,
+CL3,27.73,
+CCX,22.75,
+CCX,22.75,
+CCX,22.75,
+BNI,,Light aircraft
+BNT,,Light aircraft
+BTA,,Light aircraft
+CCJ,20.43,
+CR1,28.64,
+CR1,28.64,
+CR5,20.30,
+CR7,16.47,
+CRA,,
+CR9,16.34,
+CRK,14.83,
+CRF,,Not in database
+CS2,20.89,
+CS9,11.90,
+CS5,17.59,
+CN1,,Light aircraft
+CNC,,Light aircraft
+CN2,,Light aircraft
+CNT,,Light aircraft
+CJ1,31.07,
+CJM,36.10,
+CJ2,28.42,
+CJ5,22.15,
+CJL,29.84,
+CJ6,11.65,
+CJ8,32.10,
+CJ7,29.80,
+CJX,35.80,
+CJ8,32.10,
+CJS,31.20,
+CNF,,Light aircraft
+CS4,,Light aircraft
+SF5,50.40,
+C27,,Not in database
+C19,,Not in database
+CV2,,Not in database
+CV4,,Not in database
+CV5,,Not in database
+CVV,,Not in database
+CVX,,Not in database
+CVY,,Not in database
+CWC,,Military
+DF1,15.13,
+DF2,13.15,
+D20,18.87,
+D20,18.87,
+DF5,9.88,
+DF6,,Not in database
+DF7,18.34,
+DF8,,Not in database
+DF9,18.32,
+DF9,18.32,
+DHP,,Light aircraft
+DHR,,Light aircraft
+DHS,,Light aircraft
+DHL,,Light aircraft
+DHC,,Light aircraft
+DHT,,Light aircraft
+DH7,25.46,
+DH1,20.28,
+DH2,19.34,
+DH3,18.55,
+DH4,24.41,
+DH3,18.55,
+DH4,24.41,
+D42,,Light aircraft
+D62,,Light aircraft
+EA5,51.00,
+EMB,,Not in database
+EM2,22.46,
+E70,12.26,
+E75,12.15,
+E75,12.15,
+275,,"New type, no data available yet"
+E90,15.14,
+290,30.27,
+E95,13.93,
+295,29.43,
+EM4,33.87,
+EM5,31.70,
+EP1,42.77,
+EP3,33.12,
+EM4,33.87,
+EM5,31.70,
+ER3,24.87,
+ERD,24.36,
+ER4,23.02,
+EV5,,Development suspended
+SWF,,Not in database
+SWM,,Not in database
+D28,,Not in database
+D38,21.48,
+FRJ,,Not in database
+FK7,,Not in database
+100,16.33,
+F50,18.37,
+F50,18.37,
+F70,25.90,
+F27,11.21,
+F21,7.35,
+F22,6.45,
+F23,14.10,
+F24,14.00,
+GA1,,Light aircraft
+GA8,,Light aircraft
+CD2,,Not in database
+GRG,,Amphibious aircraft
+GRM,,Amphibious aircraft
+GR1,18.85,
+GJ2,4.98,
+G2B,4.78,
+GJ2,4.98,
+GJ3,4.78,
+GR2,21.68,
+GR3,25.80,
+GA5,27.30,
+GA6,24.60,
+GJ6,28.08,
+GJ7,,Not in database
+GJ8,,Not in database
+GJ4,23.06,
+GJ5,22.72,
+YN2,,Not in database
+H21,19.85,
+H20,21.70,
+PR1,11.15,
+BE4,10.00,
+H24,23.35,
+H25,16.64,
+H28,21.30,
+H29,22.80,
+BEP,,Light aircraft
+BE2,,Light aircraft
+BET,,Light aircraft
+BES,,Not in database
+BEH,,Not in database
+BEF,,Not in database
+BE9,,Not in database
+HEC,,Light aircraft
+HHJ,34.63,
+IL8,9.20,
+IL6,,Not in database
+IL7,9.65,
+ILW,4.27,
+IL9,8.54,
+I9F,,Not in database
+I14,,Not in database
+I4F,,Not in database
+219,,Not in database
+WWP,,Not in database
+JU5,,Not in database
+LJ2,,Not in database
+LJ3,17.67,
+LJ4,27.34,
+LJ6,19.05,
+LJ7,25.90,
+LJ8,,Not in database
+LJA,,Not in database
+L11,9.75,
+L15,8.70,
+L15,8.70,
+LOH,4.30,
+LOE,6.63,
+LOE,6.63,
+MD9,,Helicopter
+MIH,,Helicopter
+MU2,,Not in database
+YS1,,Not in database
+P18,,Not in database
+PL6,,Not in database
+PL2,,Not in database
+PL4,20.87,
+PA1,,Light aircraft
+PA2,,Light aircraft
+PAT,,Light aircraft
+S20,27.35,
+SFA,25.16,
+SFB,24.70,
+SFA,25.16,
+SY8,,Not in database
+SH3,17.23,
+SH6,24.88,
+SHS,,Not in database
+S58,,Helicopter
+S61,,Helicopter
+S76,,Helicopter
+TBM,,Not in database
+SU7,,Not in database
+SU9,14.95,
+SU9,14.95,
+BUS,,Not in database
+HOV,,Not in database
+LCH,,Not in database
+LMO,,Not in database
+RFS,,Not in database
+TRS,,Not in database
+TRN,,Not in database
+T12,,Not in database
+TU3,11.00,
+TU5,2.10,
+T20,12.50,
+T20,12.50,
+T34,9.50,
+ACT,,Not in database
+ACP,,Not in database
+PN6,,Not in database
+MA6,,Not in database
+M6F,,Not in database
+YN7,,Not in database
+YM3,,Not in database
+YK4,4.50,
+YK2,8.70,
