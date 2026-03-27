@@ -41,6 +41,7 @@ Or use `.bat` scripts:
 
 ```bash
 scripts\run_all.bat
+scripts\run_create_db.bat
 scripts\run_aircraft_table.bat
 scripts\run_airports_table.bat
 scripts\run_avinor_flights_table.bat

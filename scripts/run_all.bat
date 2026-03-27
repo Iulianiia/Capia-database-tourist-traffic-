@@ -1,6 +1,7 @@
 @echo off
 cd /d %~dp0
 
+call run_create_db.bat
 call run_aircraft_table.bat
 call run_airports_table.bat
 call run_avinor_flights_table.bat
