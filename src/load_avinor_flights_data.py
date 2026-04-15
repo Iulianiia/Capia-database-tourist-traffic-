@@ -3,8 +3,6 @@ import polars as pl
 import re
 from psycopg2.extras import execute_batch
 AVINOR_FLIGHTS_PATH = '../data/avinor_flights.csv'
-AIRCRAFT_TYPE_SEATS = '../data/aircraft_types_seats.csv'
-AIRCRAFT_TUPE_LIST_TBV_NOISE_CLEANED = '../data/aircraft_type_list_tbv_cleaned.csv'
 
 
 def sum_seats(config_str):

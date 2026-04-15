@@ -33,7 +33,7 @@ def convert_month_year_to_date(month_year_str):
     date_str = f"{year}-{month}-01"
     return date_str
 
-def read_file_passangers():
+def read_file_passangers()
     df_passengers = pl.read_csv(SSB_PASSENGERS_FILE_PATH)
 
     # Keep only rows with Arrival or Departure
