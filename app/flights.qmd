@@ -1,0 +1,171 @@
+---
+title: "Flights Dashboard"
+format: dashboard
+server: shiny
+jupyter: venv_311
+theme: slate
+---
+
+
+```{python}
+import sys
+sys.executable
+import polars as pl
+import pygwalker as pyg
+import psycopg2
+from src.db_connect import ps_connect
+from keplergl import KeplerGl
+
+conn = ps_connect()
+cursor = conn.cursor()
+query = "SELECT airline_designator_iata, departure_airport_iata, date_time_of_departure::date, arrival_airport_iata, date_time_of_arrival::date, seats FROM avinor_flights"
+df_avinor_flights = pl.read_database(query, conn)
+
+query = "SELECT name, latitude_deg, longitude_deg, iata_code, iso_country FROM airports"
+df_airports = pl.read_database(query, conn)
+df_airports = df_airports.filter(pl.col("iata_code").is_not_null())
+
+query = " select icao_code, iata_code from airports where icao_code is not null"
+df_airports_icao = pl.read_database(query, conn)
+
+query = "SELECT * from ssb_airport_monthly_traffic"
+df_airport_monthly_traffic = pl.read_database(query, conn)
+# df_airports_icao = df_airports_icao.with_columns(pl.col("icao_code").cast(pl.Utf8))
+df_airport_monthly_traffic = df_airport_monthly_traffic.join(df_airports_icao, left_on="airport_icao_code", right_on="icao_code")
+
+df_flights = df_avinor_flights.join(df_airports, left_on="departure_airport_iata", right_on="iata_code", suffix="_departure").join(df_airports, left_on="arrival_airport_iata", right_on="iata_code", suffix="_arrival")
+
+query = "SELECT * from avinor_flights"
+df_avinor = pl.read_database(query, conn)
+df_avinor=df_avinor.join(df_airports, left_on="departure_airport_iata", right_on="iata_code", suffix="_departure").join(df_airports, left_on="arrival_airport_iata", right_on="iata_code", suffix="_arrival")
+# df_avinor = df_avinor.with_columns(pl.col("date_time_of_arrival").cast(pl.Date).alias("date_of_arrival"), pl.col("date_time_of_arrival").cast(pl.Time).alias("time_of_arrival"), pl.col("date_time_of_departure").cast(pl.Date).alias("date_of_departure"), pl.col("date_time_of_departure").cast(pl.Time).alias("time_of_departure"))
+
+df_ssb = (
+    df_airport_monthly_traffic
+    .filter(
+        (pl.col("seats").is_not_null()) &
+        (pl.col("passengers").is_not_null()) &
+        (pl.col("seats") > 10) &
+        (pl.col("passengers") > 10)
+    )
+    .with_columns(
+        (pl.col("passengers") / pl.col("seats") ).alias("seat_occupancy")
+    )
+)
+```
+# Flights Dashboard
+
+## {.sidebar}
+```{python}
+from shiny.express import render, ui
+airports_list =  df_avinor_flights["departure_airport_iata"].unique().sort().to_list()
+ui.input_select("airport", "Airport:",
+                choices=airports_list)
+ui.input_date_range(
+    "date_range",
+    label="Date range input",
+    start=df_avinor_flights.select(pl.col("date_time_of_departure")).min().cast(str).row(0)[0],
+    end=df_avinor_flights.select(pl.col("date_time_of_departure")).max().cast(str).row(0)[0],
+    format="yyyy/mm/dd",
+)
+ui.input_checkbox_group("arrival_or_departure", label = "Choose airport's type", choices = ["Arrival", "Departure"])
+ui.input_checkbox_group(
+    "i_or_d",
+    label ="Choose type of flight",
+    choices= ["International", "Domestic"],
+    selected="International",
+)
+
+```
+
+## Column 
+```{python}
+
+@render.table
+def display_flights():
+    start, end = input.date_range()
+    selected_flight_type = list( input.i_or_d())
+    seleted_airport_type = list(input.arrival_or_departure())
+    df_filtred = df_flights
+    if "Arrival" in seleted_airport_type and "Departure" not in seleted_airport_type:
+        df_filtred = df_filtred.filter(pl.col("arrival_airport_iata") == input.airport())
+    elif "Departure" in seleted_airport_type and "Arrival" not in seleted_airport_type:
+        df_filtred = df_filtred.filter(pl.col("departure_airport_iata") == input.airport())
+
+    if "Domestic" in selected_flight_type and "International" not in selected_flight_type:
+        df_filtred = df_filtred.filter(pl.col("iso_country")==pl.col("iso_country_arrival"))
+
+    elif "International" in selected_flight_type and "Domestic"not in selected_flight_type:
+        df_filtred = df_filtred.filter(pl.col("iso_country")!=pl.col("iso_country_arrival"))
+
+    df_filtred = df_filtred.filter((pl.col("departure_airport_iata") == input.airport()) | (pl.col("arrival_airport_iata") == input.airport()),
+     pl.col("date_time_of_departure").is_between(start,end)
+     ).head(10).to_pandas()
+    
+    return df_filtred
+```
+# Airport Monthly Traffic
+## {.sidebar}
+```{python}
+ui.input_select("airport_traffic", "Airport:",
+                choices=df_airport_monthly_traffic["iata_code"].unique().sort().to_list())
+ui.input_date_range(
+    "date_range_monthly",
+    label="Date range input",
+    start=df_airport_monthly_traffic.select(pl.col("date")).min().cast(str).row(0)[0],
+    end=df_airport_monthly_traffic.select(pl.col("date")).max().cast(str).row(0)[0],
+    format="yyyy/mm",
+)
+``` 
+
+## Column
+```{python}
+@render.table
+def display_monthly_traffic():
+    start, end = input.date_range_monthly()
+    df_filtred = df_airport_monthly_traffic.filter(
+        (pl.col("iata_code") == input.airport_traffic()) &
+        pl.col("date").is_between(start,end)
+    ).to_pandas()
+    return df_filtred
+
+```
+# Map
+```{python}
+# from keplergl import KeplerGl
+# @render.ui
+# def display_map():
+#     map_1 = KeplerGl(height=600)
+#     map_1.add_data(data=df_avinor, name="flights")
+
+#     map_1
+```
+# Pivot
+```{python}
+
+@render.ui
+def display_people():
+    html_code =pyg.to_html(df_avinor_flights)
+    return ui.HTML(html_code)
+```
+
+# Pivot 
+```{python}
+@render.ui
+
+def display_ssb_traffic():
+
+    html_code =pyg.to_html(df_ssb)
+    return ui.HTML(html_code)
+``` 
+
+# Pivot 
+```{python}
+
+@render.ui
+
+def display_avinor():
+
+    html_code =pyg.to_html(df_avinor)
+    return ui.HTML(html_code)
+``` 

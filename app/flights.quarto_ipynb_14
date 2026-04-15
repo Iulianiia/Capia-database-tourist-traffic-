@@ -1,0 +1,342 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "3a529b93",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "title: \"Flights Dashboard\"\n",
+    "format: dashboard\n",
+    "server: shiny\n",
+    "jupyter: venv_311\n",
+    "theme: slate\n",
+    "---\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "ae46a1b0",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "shape: (5, 20)\n",
+      "┌─────┬────────────┬────────────┬────────────┬───┬────────────┬────────────┬───────────┬───────────┐\n",
+      "│ id  ┆ id_avinor  ┆ airline_de ┆ flight_num ┆ … ┆ name_arriv ┆ latitude_d ┆ longitude ┆ iso_count │\n",
+      "│ --- ┆ ---        ┆ signator_i ┆ ber        ┆   ┆ al         ┆ eg_arrival ┆ _deg_arri ┆ ry_arriva │\n",
+      "│ i64 ┆ str        ┆ ata        ┆ ---        ┆   ┆ ---        ┆ ---        ┆ val       ┆ l         │\n",
+      "│     ┆            ┆ ---        ┆ str        ┆   ┆ str        ┆ f64        ┆ ---       ┆ ---       │\n",
+      "│     ┆            ┆ str        ┆            ┆   ┆            ┆            ┆ f64       ┆ str       │\n",
+      "╞═════╪════════════╪════════════╪════════════╪═══╪════════════╪════════════╪═══════════╪═══════════╡\n",
+      "│ 2   ┆ 196073471  ┆ EK         ┆ 159        ┆ … ┆ Oslo-Garde ┆ 60.193901  ┆ 11.1004   ┆ NO        │\n",
+      "│     ┆            ┆            ┆            ┆   ┆ rmoen Inte ┆            ┆           ┆           │\n",
+      "│     ┆            ┆            ┆            ┆   ┆ rnational  ┆            ┆           ┆           │\n",
+      "│     ┆            ┆            ┆            ┆   ┆ …          ┆            ┆           ┆           │\n",
+      "│ 3   ┆ 242932973  ┆ SK         ┆ 2885       ┆ … ┆ Copenhagen ┆ 55.617901  ┆ 12.656    ┆ DK        │\n",
+      "│     ┆            ┆            ┆            ┆   ┆ Kastrup    ┆            ┆           ┆           │\n",
+      "│     ┆            ┆            ┆            ┆   ┆ Airport    ┆            ┆           ┆           │\n",
+      "│ 4   ┆ 1329517387 ┆ W6         ┆ 1747       ┆ … ┆ Stavanger  ┆ 58.876701  ┆ 5.63778   ┆ NO        │\n",
+      "│     ┆            ┆            ┆            ┆   ┆ Airport,   ┆            ┆           ┆           │\n",
+      "│     ┆            ┆            ┆            ┆   ┆ Sola       ┆            ┆           ┆           │\n",
+      "│ 5   ┆ 2101872048 ┆ LH         ┆ 877        ┆ … ┆ Frankfurt  ┆ 50.026706  ┆ 8.55835   ┆ DE        │\n",
+      "│     ┆            ┆            ┆            ┆   ┆ Main       ┆            ┆           ┆           │\n",
+      "│     ┆            ┆            ┆            ┆   ┆ Airport    ┆            ┆           ┆           │\n",
+      "│ 6   ┆ 61113900   ┆ SK         ┆ 1461       ┆ … ┆ Copenhagen ┆ 55.617901  ┆ 12.656    ┆ DK        │\n",
+      "│     ┆            ┆            ┆            ┆   ┆ Kastrup    ┆            ┆           ┆           │\n",
+      "│     ┆            ┆            ┆            ┆   ┆ Airport    ┆            ┆           ┆           │\n",
+      "└─────┴────────────┴────────────┴────────────┴───┴────────────┴────────────┴───────────┴───────────┘\n"
+     ]
+    }
+   ],
+   "source": [
+    "import polars as pl\n",
+    "import pygwalker as pyg\n",
+    "import psycopg2\n",
+    "from src.db_connect import ps_connect\n",
+    "from keplergl import KeplerGl\n",
+    "\n",
+    "conn = ps_connect()\n",
+    "cursor = conn.cursor()\n",
+    "query = \"SELECT airline_designator_iata, departure_airport_iata, date_time_of_departure::date, arrival_airport_iata, date_time_of_arrival::date, seats FROM avinor_flights\"\n",
+    "df_avinor_flights = pl.read_database(query, conn)\n",
+    "\n",
+    "query = \"SELECT name, latitude_deg, longitude_deg, iata_code, iso_country FROM airports\"\n",
+    "df_airports = pl.read_database(query, conn)\n",
+    "df_airports = df_airports.filter(pl.col(\"iata_code\").is_not_null())\n",
+    "\n",
+    "query = \" select icao_code, iata_code from airports where icao_code is not null\"\n",
+    "df_airports_icao = pl.read_database(query, conn)\n",
+    "\n",
+    "query = \"SELECT * from ssb_airport_monthly_traffic\"\n",
+    "df_airport_monthly_traffic = pl.read_database(query, conn)\n",
+    "# df_airports_icao = df_airports_icao.with_columns(pl.col(\"icao_code\").cast(pl.Utf8))\n",
+    "df_airport_monthly_traffic = df_airport_monthly_traffic.join(df_airports_icao, left_on=\"airport_icao_code\", right_on=\"icao_code\")\n",
+    "\n",
+    "df_flights = df_avinor_flights.join(df_airports, left_on=\"departure_airport_iata\", right_on=\"iata_code\", suffix=\"_departure\").join(df_airports, left_on=\"arrival_airport_iata\", right_on=\"iata_code\", suffix=\"_arrival\")\n",
+    "\n",
+    "query = \"SELECT * from avinor_flights\"\n",
+    "df_avinor = pl.read_database(query, conn)\n",
+    "df_avinor=df_avinor.join(df_airports, left_on=\"departure_airport_iata\", right_on=\"iata_code\", suffix=\"_departure\").join(df_airports, left_on=\"arrival_airport_iata\", right_on=\"iata_code\", suffix=\"_arrival\")\n",
+    "# df_avinor = df_avinor.with_columns(pl.col(\"date_time_of_arrival\").cast(pl.Date).alias(\"date_of_arrival\"), pl.col(\"date_time_of_arrival\").cast(pl.Time).alias(\"time_of_arrival\"), pl.col(\"date_time_of_departure\").cast(pl.Date).alias(\"date_of_departure\"), pl.col(\"date_time_of_departure\").cast(pl.Time).alias(\"time_of_departure\"))\n",
+    "print(df_avinor.head())\n",
+    "df_ssb = (\n",
+    "    df_airport_monthly_traffic\n",
+    "    .filter(\n",
+    "        (pl.col(\"seats\").is_not_null()) &\n",
+    "        (pl.col(\"passengers\").is_not_null()) &\n",
+    "        (pl.col(\"seats\") > 10) &\n",
+    "        (pl.col(\"passengers\") > 10)\n",
+    "    )\n",
+    "    .with_columns(\n",
+    "        (pl.col(\"passengers\") / pl.col(\"seats\") ).alias(\"seat_occupancy\")\n",
+    "    )\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c068c834",
+   "metadata": {},
+   "source": [
+    "# Flights Dashboard\n",
+    "\n",
+    "## {.sidebar}"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "ccaf55ad",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# from shiny.express import render, ui\n",
+    "# airports_list =  df_avinor_flights[\"departure_airport_iata\"].unique().sort().to_list()\n",
+    "# ui.input_select(\"airport\", \"Airport:\",\n",
+    "#                 choices=airports_list)\n",
+    "# ui.input_date_range(\n",
+    "#     \"date_range\",\n",
+    "#     label=\"Date range input\",\n",
+    "#     start=df_avinor_flights.select(pl.col(\"date_time_of_departure\")).min().cast(str).row(0)[0],\n",
+    "#     end=df_avinor_flights.select(pl.col(\"date_time_of_departure\")).max().cast(str).row(0)[0],\n",
+    "#     format=\"yyyy/mm/dd\",\n",
+    "# )\n",
+    "# ui.input_checkbox_group(\"arrival_or_departure\", label = \"Choose airport's type\", choices = [\"Arrival\", \"Departure\"])\n",
+    "# ui.input_checkbox_group(\n",
+    "#     \"i_or_d\",\n",
+    "#     label =\"Choose type of flight\",\n",
+    "#     choices= [\"International\", \"Domestic\"],\n",
+    "#     selected=\"International\",\n",
+    "# )"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "151b89d3",
+   "metadata": {},
+   "source": [
+    "## Column "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "6dbf437d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# @render.table\n",
+    "# def display_flights():\n",
+    "#     start, end = input.date_range()\n",
+    "#     selected_flight_type = list( input.i_or_d())\n",
+    "#     seleted_airport_type = list(input.arrival_or_departure())\n",
+    "#     df_filtred = df_flights\n",
+    "#     if \"Arrival\" in seleted_airport_type and \"Departure\" not in seleted_airport_type:\n",
+    "#         df_filtred = df_filtred.filter(pl.col(\"arrival_airport_iata\") == input.airport())\n",
+    "#     elif \"Departure\" in seleted_airport_type and \"Arrival\" not in seleted_airport_type:\n",
+    "#         df_filtred = df_filtred.filter(pl.col(\"departure_airport_iata\") == input.airport())\n",
+    "\n",
+    "#     if \"Domestic\" in selected_flight_type and \"International\" not in selected_flight_type:\n",
+    "#         df_filtred = df_filtred.filter(pl.col(\"iso_country\")==pl.col(\"iso_country_arrival\"))\n",
+    "\n",
+    "#     elif \"International\" in selected_flight_type and \"Domestic\"not in selected_flight_type:\n",
+    "#         df_filtred = df_filtred.filter(pl.col(\"iso_country\")!=pl.col(\"iso_country_arrival\"))\n",
+    "\n",
+    "#     df_filtred = df_filtred.filter((pl.col(\"departure_airport_iata\") == input.airport()) | (pl.col(\"arrival_airport_iata\") == input.airport()),\n",
+    "#      pl.col(\"date_time_of_departure\").is_between(start,end)\n",
+    "#      ).head(10).to_pandas()\n",
+    "    \n",
+    "#     return df_filtred"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7411a11c",
+   "metadata": {},
+   "source": [
+    "# Airport Monthly Traffic\n",
+    "## {.sidebar}"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "a2bf63b4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# ui.input_select(\"airport_traffic\", \"Airport:\",\n",
+    "#                 choices=df_airport_monthly_traffic[\"iata_code\"].unique().sort().to_list())\n",
+    "# ui.input_date_range(\n",
+    "#     \"date_range_monthly\",\n",
+    "#     label=\"Date range input\",\n",
+    "#     start=df_airport_monthly_traffic.select(pl.col(\"date\")).min().cast(str).row(0)[0],\n",
+    "#     end=df_airport_monthly_traffic.select(pl.col(\"date\")).max().cast(str).row(0)[0],\n",
+    "#     format=\"yyyy/mm\",\n",
+    "# )"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ae37f893",
+   "metadata": {},
+   "source": [
+    "## Column"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "abee12e9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# @render.table\n",
+    "# def display_monthly_traffic():\n",
+    "#     start, end = input.date_range_monthly()\n",
+    "#     df_filtred = df_airport_monthly_traffic.filter(\n",
+    "#         (pl.col(\"iata_code\") == input.airport_traffic()) &\n",
+    "#         pl.col(\"date\").is_between(start,end)\n",
+    "#     ).to_pandas()\n",
+    "#     return df_filtred"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "65fe7561",
+   "metadata": {},
+   "source": [
+    "# Map"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "cb624bc3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# from keplergl import KeplerGl\n",
+    "# @render.ui\n",
+    "# def display_map():\n",
+    "#     map_1 = KeplerGl(height=600)\n",
+    "#     map_1.add_data(data=df_avinor, name=\"flights\")\n",
+    "\n",
+    "#     map_1"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "54c05da8",
+   "metadata": {},
+   "source": [
+    "# Pivot"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "5657409f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# @render.ui\n",
+    "# def display_people():\n",
+    "#     html_code =pyg.to_html(df_avinor_flights)\n",
+    "#     return ui.HTML(html_code)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "45001d72",
+   "metadata": {},
+   "source": [
+    "# Pivot "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "276e398a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# @render.ui\n",
+    "\n",
+    "# def display_ssb_traffic():\n",
+    "\n",
+    "#     html_code =pyg.to_html(df_ssb)\n",
+    "#     return ui.HTML(html_code)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2d3fb4e0",
+   "metadata": {},
+   "source": [
+    "# Pivot "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "09ba642f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# @render.ui\n",
+    "\n",
+    "# def display_avinor():\n",
+    "\n",
+    "#     html_code =pyg.to_html(df_avinor)\n",
+    "#     return ui.HTML(html_code)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3.11 (venv_311)",
+   "language": "python",
+   "name": "venv_311",
+   "path": "C:\\Users\\Iulinaiia Martynenko\\AppData\\Roaming\\jupyter\\kernels\\venv_311"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
