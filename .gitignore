@@ -5,7 +5,7 @@
 *$py.class
 
 # Virtual environment
-
+venv311/
 venv/
 .env/
 .env.*
@@ -38,3 +38,6 @@ Thumbs.db
 
 seats_by_model.py
 .quarto_ipynb*
+/.quarto/
+**/*.quarto_ipynb
+*.txt

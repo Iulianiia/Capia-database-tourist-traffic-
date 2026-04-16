@@ -1,2 +1,9 @@
 psycopg2-binary
 polars
+shiny
+pygwalker
+keplergl
+dotenv
+setuptools<82
+matplotlib
+plotly
