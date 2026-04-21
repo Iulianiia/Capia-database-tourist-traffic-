@@ -84,7 +84,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="bslib-grid-item html-fill-item tab-content bslib-grid" data-layout="fill" style="display: grid; grid-template-rows: minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
 <div id="flights-dashboard" class="dashboard-page tab-pane show active html-fill-item html-fill-container dashboard-sidebar-container" data-orientation="rows" aria-labelledby="tab-flights-dashboard">
 <div class="bslib-sidebar-layout html-fill-item html-fill-container" data-bslib-sidebar-open="desktop" data-bslib-sidebar-init="true" data-bslib-sidebar-border="false" data-bslib-sidebar-border-radius="false"><div class="main html-fill-container html-fill-item"><div class="sidebar-content html-fill-item html-fill-container">
-<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr) minmax(3em, 1fr);
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 50fr) minmax(3em, 50fr);
 grid-auto-rows: minmax(0, 1fr);">
 <div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 40fr) minmax(3em, 40fr) minmax(3em, 20fr); grid-auto-columns: minmax(0, 1fr);">
 <div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr);
@@ -203,6 +203,9 @@ grid-auto-rows: minmax(0, 1fr);">
 grid-auto-rows: minmax(0, 1fr);">
 <div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="21">
+<p>Domestic Departure</p>
+</div>
 <div class="cell-output cell-output-display html-fill-item html-fill-container">
 <shiny-data-frame id="dd" class="html-fill-item html-fill-container"></shiny-data-frame><script type="application/json" data-html-dependency="">{"name": "shiny-data-frame-output", "version": "1.6.0", "source": {"package": "shiny", "subdir": "www/py-shiny/data-frame"}, "script": [{"src": "data-frame.js", "type": "module"}], "stylesheet": [], "meta": [], "all_files": false, "head": null}</script>
 <script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
@@ -215,6 +218,9 @@ grid-auto-rows: minmax(0, 1fr);">
     </span>
 </bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div><div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="22">
+<p>Domestic Arrival</p>
+</div>
 <div class="cell-output cell-output-display html-fill-item html-fill-container">
 <shiny-data-frame id="da" class="html-fill-item html-fill-container"></shiny-data-frame><script type="application/json" data-html-dependency="">{"name": "shiny-data-frame-output", "version": "1.6.0", "source": {"package": "shiny", "subdir": "www/py-shiny/data-frame"}, "script": [{"src": "data-frame.js", "type": "module"}], "stylesheet": [], "meta": [], "all_files": false, "head": null}</script>
 <script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
@@ -227,6 +233,9 @@ grid-auto-rows: minmax(0, 1fr);">
     </span>
 </bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div><div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="23">
+<p>International Departure</p>
+</div>
 <div class="cell-output cell-output-display html-fill-item html-fill-container">
 <shiny-data-frame id="id" class="html-fill-item html-fill-container"></shiny-data-frame><script type="application/json" data-html-dependency="">{"name": "shiny-data-frame-output", "version": "1.6.0", "source": {"package": "shiny", "subdir": "www/py-shiny/data-frame"}, "script": [{"src": "data-frame.js", "type": "module"}], "stylesheet": [], "meta": [], "all_files": false, "head": null}</script>
 <script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
@@ -239,8 +248,12 @@ grid-auto-rows: minmax(0, 1fr);">
     </span>
 </bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div><div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-body html-fill-item html-fill-container">
-<div class="cell-output cell-output-display html-fill-item html-fill-container no-overflow-x">
-<div class="shiny-html-output html-fill-item html-fill-container" id="id"></div>
+<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="24">
+<p>International Arrival</p>
+</div>
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+<shiny-data-frame id="ia" class="html-fill-item html-fill-container"></shiny-data-frame><script type="application/json" data-html-dependency="">{"name": "shiny-data-frame-output", "version": "1.6.0", "source": {"package": "shiny", "subdir": "www/py-shiny/data-frame"}, "script": [{"src": "data-frame.js", "type": "module"}], "stylesheet": [], "meta": [], "all_files": false, "head": null}</script>
+<script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
 </div>
 </div>
 <bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">

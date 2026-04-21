@@ -13,27 +13,32 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
     # IMPORT LIBRARIES
     import polars as pl
     import pygwalker as pyg
+    import plotly.express as px
+    from pmdarima import auto_arima
     import psycopg2
-    from src.db_connect import ps_connect
-    from keplergl import KeplerGl
-    from shinywidgets import render_widget, render_plotly
     import pandas as pd
-    from shiny import render, reactive, ui
-    # from shiny.express import render, ui,  input
-    import matplotlib.pyplot as plt
-    from datetime import datetime
-    import plotly.graph_objects as go
-    from ipyleaflet import Map, Polyline, CircleMarker, Marker
-    from datetime import date
     from statsmodels.tsa.stattools import adfuller
     from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
     from statsmodels.tsa.statespace.sarimax import SARIMAX
     from plotly.subplots import make_subplots
+
+    from src.db_connect import ps_connect
+
+
+    from keplergl import KeplerGl
+    from shinywidgets import render_widget, render_plotly
+    import matplotlib.pyplot as plt
+    from datetime import datetime
+    import plotly.graph_objects as go
+    from ipyleaflet import Map, Polyline, CircleMarker, Marker
+    from shiny import render, reactive, ui
+    # from shiny.express import render, ui,  input
+
+    from datetime import date
     import base64
     import calendar
     from IPython.display import HTML
-    import plotly.express as px
-    from pmdarima import auto_arima
+
     # from sklearn.metrics import mean_absolute_error, mean_squared_error
 
     # ========================================================================
@@ -45,7 +50,7 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
     # AIRPORT'S LOCATIONS
     query = "SELECT * FROM airports"
     df_airports_all = pl.read_database(query, conn)
-    df_airports = df_airports_all.select(pl.col("name"), pl.col("latitude_deg"), pl.col("longitude_deg"), pl.col("iata_code"))
+    df_airports = df_airports_all.select( pl.col("latitude_deg"), pl.col("longitude_deg"), pl.col("iata_code"))
     df_airports = df_airports.filter(pl.col("iata_code").is_not_null())
 
 
@@ -63,20 +68,30 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
         right_on="icao_code"
     )
     # AVINOR FLIGHTS + ISO_COUNTRY + AIRPORTS CODES
-    query = "SELECT * from avinor_flights"
-    df_avinor = pl.read_database(query, conn)
-    df_avinor_kepler = df_avinor.join(
-        df_airports,
-        left_on="departure_airport_iata",
-        right_on="iata_code",
-        ).join(
-        df_airports,
-        left_on="arrival_airport_iata",
-        right_on="iata_code",
-        suffix="_arrival"
-    )
+    query = """SELECT  date_time_of_departure, departure_airport_iata, 
+     date_time_of_arrival,arrival_airport_iata,
+      aircraft_type, seats from avinor_flights"""
+    df_avinor_all = pl.read_database(query, conn)
+    df_avinor_kepler = df_avinor_all.select(pl.col("date_time_of_departure").dt.date().alias("dep_date"),
+     pl.col("departure_airport_iata"), pl.col("date_time_of_arrival").dt.date().alias("arr_date"), pl.col("arrival_airport_iata" ))
 
-    df_avinor = df_avinor.join(
+    df_dep = df_airports.rename({
+        "iata_code": "departure_iata",
+        "latitude_deg": "dep_lat",
+        "longitude_deg": "dep_lon"
+    })
+
+    df_arr = df_airports.rename({
+        "iata_code": "arrival_iata",
+        "latitude_deg": "arr_lat",
+        "longitude_deg": "arr_lon"
+    })
+    df_avinor_kepler = (
+        df_avinor_kepler
+        .join(df_dep, left_on="departure_airport_iata", right_on="departure_iata")
+        .join(df_arr, left_on="arrival_airport_iata", right_on="arrival_iata")
+    )
+    df_avinor = df_avinor_all.join(
         df_airports_code,
         left_on="departure_airport_iata",
         right_on="iata_code",
@@ -149,26 +164,28 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
         )
     )
     # READ AIRCRAFT SEATS BY TYPE 
-    df_aircraft_seats_by_type = pl.read_csv("../data/aircraft_types_seats.csv")
-    df_aircraft_seats_by_type = df_aircraft_seats_by_type.select(pl.col("aircraft.type"), pl.col("seats"))
+    # df_aircraft_seats_by_type = pl.read_csv("../data/aircraft_types_seats.csv")
+    query = "select * from aircraft_types_seats"
+    df_aircraft_seats_by_type = pl.read_database(query, conn)
+    df_aircraft_seats_by_type = df_aircraft_seats_by_type.select(pl.col("type"), pl.col("seats_max"))
     # EXTRACT NUMBER OF SEATS FROM SEATS COLUMN (HANDLE RANGES LIKE 100-150 BY TAKING THE MAX VALUE) AND CAST TO INT
-    df_aircraft_seats_by_type = (df_aircraft_seats_by_type.with_columns(
-        pl.col("seats")
-        .str.replace_all("–", "-")
-        .str.extract(r"-(\d+)$")
-        .fill_null(pl.col("seats"))
-        .cast(pl.Int64)
-    ))
+    # df_aircraft_seats_by_type = (df_aircraft_seats_by_type.with_columns(
+    #     pl.col("seats")
+    #     .str.replace_all("–", "-")
+    #     .str.extract(r"-(\d+)$")
+    #     .fill_null(pl.col("seats"))
+    #     .cast(pl.Int64)
+    # ))
     # JOIN SEATS TO AVINOR DATA IN SEATS_RIGHT_COLUMN
     df_avinor = df_avinor.join(
         df_aircraft_seats_by_type,
         left_on="aircraft_type",
-        right_on="aircraft.type",
+        right_on="type",
         how="left"
     )
     # COALESCE SEATS AND SEATS_RIGHT TO TOTAL_SEATS COLUMN
     df_avinor = df_avinor.with_columns(
-       pl.coalesce(pl.col("seats"), pl.col("seats_right")).alias("total_seats")
+       pl.coalesce(pl.col("seats"), pl.col("seats_max")).alias("total_seats")
     )
 
     # ========================================================================
@@ -307,19 +324,19 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
         df = df.asfreq("MS")
 
         passengers_data = df["passengers"].fillna(0)
-        with open("passengers_data.txt", "w", encoding="utf-8") as f:
-            f.write(passengers_data.to_string())
-        result = adfuller(passengers_data)
-        with open("adfuller_result.txt", "w", encoding="utf-8") as f:
-            f.write(f"ADF Statistic: {result[0]}\n")
-            f.write(f"p-value: {result[1]}\n")
-            f.write("Critical Values:\n")
-            for key, value in result[4].items():
-                f.write(f"   {key}: {value}\n")
-        fig, axes = plt.subplots(1, 2, figsize=(12, 4))
-        plot_acf(passengers_data, lags=12, ax=axes[0])
-        plot_pacf(passengers_data, lags=12, ax=axes[1])
-        plt.savefig("acf_pacf.png")
+        # with open("passengers_data.txt", "w", encoding="utf-8") as f:
+        #     f.write(passengers_data.to_string())
+        # result = adfuller(passengers_data)
+        # with open("adfuller_result.txt", "w", encoding="utf-8") as f:
+        #     f.write(f"ADF Statistic: {result[0]}\n")
+        #     f.write(f"p-value: {result[1]}\n") 
+        #     f.write("Critical Values:\n")
+        #     for key, value in result[4].items(): 0.05
+        #         f.write(f"   {key}: {value}\n")
+        # fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+        # plot_acf(passengers_data, lags=12, ax=axes[0])
+        # plot_pacf(passengers_data, lags=12, ax=axes[1])
+        # plt.savefig("acf_pacf.png")
         # TO TUNE !!!!!!!!!
         # p, d, q = 1, 1, 1
         # P, D, Q, s = 1, 0, 0, 12
@@ -335,6 +352,9 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
             max_q=3,
             max_P=2,
             max_Q=2,
+            start_p=1,
+            start_q=1,
+            start_P=1,
             trace=True,
             stepwise=True,
             error_action="ignore",
@@ -345,9 +365,9 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
         best_order = auto_model.order
         best_seasonal = auto_model.seasonal_order
 
-        with open("sarima_params.txt", "w") as f:
-            f.write(f"order: {best_order}\n")
-            f.write(f"seasonal_order: {best_seasonal}\n")
+        # with open("sarima_params.txt", "w") as f:
+        #     f.write(f"order: {best_order}\n")
+        #     f.write(f"seasonal_order: {best_seasonal}\n")
 
         # final model with best parameters
         model = SARIMAX(
@@ -391,8 +411,8 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
             forecast_df["date"] = forecast_dates
 
             # save file (safe path)
-            with open("sarima_forecast.txt", "w", encoding="utf-8") as f:
-                f.write(forecast_df.to_string())
+            # with open("sarima_forecast.txt", "w", encoding="utf-8") as f:
+            #     f.write(forecast_df.to_string())
 
             return forecast_df
 
@@ -646,9 +666,7 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
     @render_plotly
     def plot_arival_departure_growth():
 
-        # ----------------------------
-        # 1. PREP DATA
-        # ----------------------------
+
         df = (
             ssb_given_inputs()
             .with_columns([
@@ -671,18 +689,13 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
             .sort(["year", "month"])
         )
 
-        # ----------------------------
-        # 2. MONTH LABELS
-        # ----------------------------
+
         month_map = {i: calendar.month_abbr[i].lower() for i in range(1, 13)}
 
         df = df.with_columns(
             pl.col("month").replace_strict(month_map).alias("month_name")
         )
 
-        # ----------------------------
-        # 3. TO PLOTLY
-        # ----------------------------
         df_pd = df.to_pandas()
 
         fig = px.line(
@@ -765,19 +778,16 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
                 (pl.col("departure_airport_iata") == airport()) |
                 (pl.col("arrival_airport_iata") == airport())
             )
-            # витягуємо дату і годину
             .with_columns([
                 pl.col("date_time_of_departure").dt.date().alias("date"),
                 pl.col("date_time_of_departure").dt.hour().alias("hour")
             ])
         
-            # кількість рейсів у кожен день + годину
             .group_by(["date", "hour"])
             .agg(
                 pl.count().alias("hourly_flights")
             )
         
-            # середнє по годинах (усереднюємо по днях)
             .group_by("hour")
             .agg(
                 pl.col("hourly_flights").mean().alias("avg_flights")
@@ -806,52 +816,54 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
     @render_widget
     def plot_flights_ipyleaflet():
 
-        # 📦 фільтр даних
-        df = (
-            df_avinor_kepler
-            .filter(
-                pl.col("departure_airport_iata") == airport()
-            )
+        routes = (
+        df_avinor_kepler
+        .filter(pl.col("departure_airport_iata") == airport())
         .filter(
-        pl.col("date_time_of_departure").dt.date().is_between(
-            date(2026, 1, 1),
-            date(2026, 1, 31)
+            pl.col("dep_date").is_between(date(2026, 1, 1), date(2026, 1, 31))
         )
-    )
+        .group_by("arrival_airport_iata")
+        .agg(
+            pl.len().alias("flight_count"),
+            pl.first("arr_lat"),
+            pl.first("arr_lon")
         )
+        )
+        dep = (
+        df_avinor_kepler
+        .filter(pl.col("departure_airport_iata") == airport())
+        .select(["dep_lat", "dep_lon"])
+        .drop_nulls()
+        .head(1)
+        .to_pandas()
+        )
+        dep_lat, dep_lon = dep.iloc[0]
 
-        pdf = df.to_pandas()
-
-        # Тщкцфн
-        m = Map(center=(df["latitude_deg"][0], df["longitude_deg"][0] ), zoom=4)
+        m = Map(center=(dep_lat, dep_lon), zoom=4)
 
         # m.add(Marker(location=( df["latitude_deg"][0], df["longitude_deg"][0] )))
     
+        pdf = routes.to_pandas()
+
         for _, row in pdf.iterrows():
 
-            if any(pd.isna([
-                row["latitude_deg"], row["longitude_deg"],
-                row["latitude_deg_arrival"], row["longitude_deg_arrival"]
-            ])):
+            if pd.isna(row["arr_lat"]) or pd.isna(row["arr_lon"]):
                 continue
 
             line = Polyline(
                 locations=[
-                    (row["latitude_deg"], row["longitude_deg"],),
-                    (row["latitude_deg_arrival"], row["longitude_deg_arrival"])
+                    (dep_lat, dep_lon),
+                    (row["arr_lat"], row["arr_lon"])
                 ],
                 color="blue",
-                weight=2,
-                opacity=0.5
+                weight=max(1, row["flight_count"] // 40),
+                opacity=0.6
             )
-
             m.add(line)
 
-        # 
-        base = pdf[pdf["departure_airport_iata"] == airport()].iloc[0]
 
         m.add(CircleMarker(
-            location=(df["latitude_deg"][0], df["longitude_deg"][0] ),
+            location=(dep_lat, dep_lon),
             radius=6,
             color="red"
         ))
@@ -860,27 +872,30 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
 
     # ========================================================================
 
+    ui.markdown("Domestic Departure")
     @render.data_frame
     def dd():
         return make_widget("DD")
 
     # ========================================================================
 
+    ui.markdown("Domestic Arrival")
     @render.data_frame
     def da():
         return make_widget("DA")
 
     # ========================================================================
 
+    ui.markdown("International Departure")
     @render.data_frame
     def id():
         return make_widget("ID")
 
     # ========================================================================
 
-    @render.ui
-    def id():
-        ui.output("IA")
+    ui.markdown("International Arrival")
+    @render.data_frame
+    def ia():
         return make_widget("IA")
 
     # ========================================================================
@@ -891,7 +906,7 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
             pl.col("flight_type") == flight_type
         )
 
-        return pl.DataTable({
+        return pl.DataFrame({
             "Metric": ["Passengers", "Flights", "Seats"],
             "Value": [
                 df_DD["passengers"].sum(),
@@ -929,7 +944,7 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
     from keplergl import KeplerGl
     @render_widget
     def display_map():
-        map_1 = KeplerGl(height=600, data={"flights": df_avinor.to_pandas().dropna()})
+        map_1 = KeplerGl(height=600, data={"flights": df_avinor_kepler.to_pandas().dropna()})
         # map_1.add_data(data=df_avinor.to_pandas().dropna(), name="flights")
 
         return map_1

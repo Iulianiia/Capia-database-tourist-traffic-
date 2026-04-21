@@ -1,0 +1,39 @@
+---
+title: "Flights Dashboard"
+format: dashboard
+server: shiny
+jupyter: venv311
+# theme: slate
+---
+```{python}
+# CONNECT TO DATABASE AND LOAD DATA
+from src.db_connect import ps_connect
+conn = ps_connect()
+cursor = conn.cursor()
+
+# AIRPORT'S AVINOR
+query = """SELECT
+    a.date_time_of_departure::date,
+    a.departure_airport_iata AS d_iata,
+    a.date_time_of_arrival::date,
+    a.arrival_airport_iata AS a_iata,
+    a.aircraft_type,
+    a.seats,
+
+    dep.icao_code AS dep_icao,
+    dep.iso_country AS dep_country,
+
+    arr.icao_code AS arr_icao,
+    arr.iso_country AS arr_country
+
+FROM avinor_flights a
+
+LEFT JOIN airports dep
+    ON dep.iata_code = a.departure_airport_iata
+
+LEFT JOIN airports arr
+    ON arr.iata_code = a.arrival_airport_iata;"""
+    df_avinor_with_airports = pl.read_database(query,conn)
+
+```
+
