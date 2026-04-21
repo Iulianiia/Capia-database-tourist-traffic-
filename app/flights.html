@@ -38,9 +38,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="flights_files/libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="flights_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="flights_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="flights_files/libs/bootstrap/bootstrap-38f07720a772b5bea1d77eb68b1c7b8f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="dark">
-<link href="flights_files/libs/bootstrap/bootstrap-dark-38f07720a772b5bea1d77eb68b1c7b8f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="flights_files/libs/bootstrap/bootstrap-38f07720a772b5bea1d77eb68b1c7b8f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="dark">
+<link href="flights_files/libs/bootstrap/bootstrap-6a298fde403041579a69b2204f21ed52.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="flights_files/libs/bootstrap/bootstrap-dark-6a298fde403041579a69b2204f21ed52.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="flights_files/libs/bootstrap/bootstrap-6a298fde403041579a69b2204f21ed52.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script src="flights_files/libs/quarto-dashboard/quarto-dashboard.js"></script>
 <script src="flights_files/libs/quarto-dashboard/stickythead.js"></script>
 
@@ -84,9 +84,11 @@ ul.task-list li input[type="checkbox"] {
 <div class="bslib-grid-item html-fill-item tab-content bslib-grid" data-layout="fill" style="display: grid; grid-template-rows: minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
 <div id="flights-dashboard" class="dashboard-page tab-pane show active html-fill-item html-fill-container dashboard-sidebar-container" data-orientation="rows" aria-labelledby="tab-flights-dashboard">
 <div class="bslib-sidebar-layout html-fill-item html-fill-container" data-bslib-sidebar-open="desktop" data-bslib-sidebar-init="true" data-bslib-sidebar-border="false" data-bslib-sidebar-border-radius="false"><div class="main html-fill-container html-fill-item"><div class="sidebar-content html-fill-item html-fill-container">
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr) minmax(3em, 1fr);
+grid-auto-rows: minmax(0, 1fr);">
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 40fr) minmax(3em, 40fr) minmax(3em, 20fr); grid-auto-columns: minmax(0, 1fr);">
 <div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr);
 grid-auto-rows: minmax(0, 1fr);">
-<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
 <div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-body html-fill-item html-fill-container">
 <div class="cell-output cell-output-display html-fill-item html-fill-container">
@@ -102,13 +104,160 @@ grid-auto-rows: minmax(0, 1fr);">
     </span>
 </bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
 </div>
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr);
+grid-auto-rows: minmax(0, 1fr);">
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+<div id="render_flights_years" class="shiny-ipywidget-output shiny-report-size shiny-report-theme html-fill-item html-fill-container"></div><script type="application/json" data-html-dependency="">{"name": "ipywidget-output-binding", "version": "0.8.0", "source": {"package": "shinywidgets", "subdir": "static"}, "script": [{"src": "libembed-amd.js"}, {"src": "output.js"}], "stylesheet": [{"href": "shinywidgets.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
+<script type="application/json" data-html-dependency="">{"name": "headcontent_64c93189711f8969640e7b8f06f689fadea80c2e", "version": "0.0", "source": null, "script": [], "stylesheet": [], "meta": [], "all_files": false, "head": "<script data-jupyter-widgets-cdn=\"https://cdn.jsdelivr.net/npm/\"><\/script>"}</script>
+<script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
+</div>
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr);
+grid-auto-rows: minmax(0, 1fr);">
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+<div id="plot_domestic_internatinal" class="shiny-ipywidget-output shiny-report-size shiny-report-theme html-fill-item html-fill-container"></div><script type="application/json" data-html-dependency="">{"name": "ipywidget-output-binding", "version": "0.8.0", "source": {"package": "shinywidgets", "subdir": "static"}, "script": [{"src": "libembed-amd.js"}, {"src": "output.js"}], "stylesheet": [{"href": "shinywidgets.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
+<script type="application/json" data-html-dependency="">{"name": "headcontent_64c93189711f8969640e7b8f06f689fadea80c2e", "version": "0.0", "source": null, "script": [], "stylesheet": [], "meta": [], "all_files": false, "head": "<script data-jupyter-widgets-cdn=\"https://cdn.jsdelivr.net/npm/\"><\/script>"}</script>
+<script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
+</div>
+</div><div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 30fr) minmax(3em, 52fr) minmax(3em, 18fr); grid-auto-columns: minmax(0, 1fr);">
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr) minmax(3em, 1fr) minmax(3em, 1fr);
+grid-auto-rows: minmax(0, 1fr);">
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+<div id="plot_arival_departure_growth" class="shiny-ipywidget-output shiny-report-size shiny-report-theme html-fill-item html-fill-container"></div><script type="application/json" data-html-dependency="">{"name": "ipywidget-output-binding", "version": "0.8.0", "source": {"package": "shinywidgets", "subdir": "static"}, "script": [{"src": "libembed-amd.js"}, {"src": "output.js"}], "stylesheet": [{"href": "shinywidgets.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
+<script type="application/json" data-html-dependency="">{"name": "headcontent_64c93189711f8969640e7b8f06f689fadea80c2e", "version": "0.0", "source": null, "script": [], "stylesheet": [], "meta": [], "all_files": false, "head": "<script data-jupyter-widgets-cdn=\"https://cdn.jsdelivr.net/npm/\"><\/script>"}</script>
+<script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div><div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+<div id="plot_weekly_traffic" class="shiny-ipywidget-output shiny-report-size shiny-report-theme html-fill-item html-fill-container"></div><script type="application/json" data-html-dependency="">{"name": "ipywidget-output-binding", "version": "0.8.0", "source": {"package": "shinywidgets", "subdir": "static"}, "script": [{"src": "libembed-amd.js"}, {"src": "output.js"}], "stylesheet": [{"href": "shinywidgets.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
+<script type="application/json" data-html-dependency="">{"name": "headcontent_64c93189711f8969640e7b8f06f689fadea80c2e", "version": "0.0", "source": null, "script": [], "stylesheet": [], "meta": [], "all_files": false, "head": "<script data-jupyter-widgets-cdn=\"https://cdn.jsdelivr.net/npm/\"><\/script>"}</script>
+<script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div><div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+<div id="plot_hourly_traffic" class="shiny-ipywidget-output shiny-report-size shiny-report-theme html-fill-item html-fill-container"></div><script type="application/json" data-html-dependency="">{"name": "ipywidget-output-binding", "version": "0.8.0", "source": {"package": "shinywidgets", "subdir": "static"}, "script": [{"src": "libembed-amd.js"}, {"src": "output.js"}], "stylesheet": [{"href": "shinywidgets.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
+<script type="application/json" data-html-dependency="">{"name": "headcontent_64c93189711f8969640e7b8f06f689fadea80c2e", "version": "0.0", "source": null, "script": [], "stylesheet": [], "meta": [], "all_files": false, "head": "<script data-jupyter-widgets-cdn=\"https://cdn.jsdelivr.net/npm/\"><\/script>"}</script>
+<script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
+</div>
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr);
+grid-auto-rows: minmax(0, 1fr);">
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+<div id="plot_flights_ipyleaflet" class="shiny-ipywidget-output shiny-report-size shiny-report-theme html-fill-item html-fill-container"></div><script type="application/json" data-html-dependency="">{"name": "ipywidget-output-binding", "version": "0.8.0", "source": {"package": "shinywidgets", "subdir": "static"}, "script": [{"src": "libembed-amd.js"}, {"src": "output.js"}], "stylesheet": [{"href": "shinywidgets.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
+<script type="application/json" data-html-dependency="">{"name": "headcontent_64c93189711f8969640e7b8f06f689fadea80c2e", "version": "0.0", "source": null, "script": [], "stylesheet": [], "meta": [], "all_files": false, "head": "<script data-jupyter-widgets-cdn=\"https://cdn.jsdelivr.net/npm/\"><\/script>"}</script>
+<script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
+</div>
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr) minmax(3em, 1fr) minmax(3em, 1fr) minmax(3em, 1fr);
+grid-auto-rows: minmax(0, 1fr);">
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+<shiny-data-frame id="dd" class="html-fill-item html-fill-container"></shiny-data-frame><script type="application/json" data-html-dependency="">{"name": "shiny-data-frame-output", "version": "1.6.0", "source": {"package": "shiny", "subdir": "www/py-shiny/data-frame"}, "script": [{"src": "data-frame.js", "type": "module"}], "stylesheet": [], "meta": [], "all_files": false, "head": null}</script>
+<script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div><div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+<shiny-data-frame id="da" class="html-fill-item html-fill-container"></shiny-data-frame><script type="application/json" data-html-dependency="">{"name": "shiny-data-frame-output", "version": "1.6.0", "source": {"package": "shiny", "subdir": "www/py-shiny/data-frame"}, "script": [{"src": "data-frame.js", "type": "module"}], "stylesheet": [], "meta": [], "all_files": false, "head": null}</script>
+<script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div><div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+<shiny-data-frame id="id" class="html-fill-item html-fill-container"></shiny-data-frame><script type="application/json" data-html-dependency="">{"name": "shiny-data-frame-output", "version": "1.6.0", "source": {"package": "shiny", "subdir": "www/py-shiny/data-frame"}, "script": [{"src": "data-frame.js", "type": "module"}], "stylesheet": [], "meta": [], "all_files": false, "head": null}</script>
+<script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div><div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container no-overflow-x">
+<div class="shiny-html-output html-fill-item html-fill-container" id="id"></div>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
+</div>
+</div>
 </div>
 </div></div><aside id="bslib-sidebar-1" class="sidebar html-fill-container html-fill-item"><div class="html-fill-item html-fill-container">
 <div class="cell-output cell-output-display no-overflow-x" data-execution_count="3">
 <div class="form-group shiny-input-container">
   <label class="control-label" id="airport-label" for="airport">Airport:</label>
   <div>
-    <select class="shiny-input-select form-select" id="airport">      <option selected=""></option>
+    <select class="shiny-input-select form-select" id="airport">      <option></option>
       <option value="AES">AES</option>
       <option value="ALF">ALF</option>
       <option value="ANX">ANX</option>
@@ -151,7 +300,7 @@ grid-auto-rows: minmax(0, 1fr);">
       <option value="SSJ">SSJ</option>
       <option value="SVG">SVG</option>
       <option value="SVJ">SVJ</option>
-      <option value="TOS">TOS</option>
+      <option value="TOS" selected="">TOS</option>
       <option value="TRD">TRD</option>
       <option value="TRF">TRF</option>
       <option value="VAW">VAW</option>
@@ -163,35 +312,9 @@ grid-auto-rows: minmax(0, 1fr);">
 <div id="date_range" class="shiny-date-range-input form-group shiny-input-container">
   <label class="control-label" id="date_range-label" for="date_range">Date range input</label>
   <div class="input-daterange input-group input-group-sm">
-    <input class="form-control" type="text" aria-labelledby="date_range-label" title="Date format: yyyy/mm/dd" data-date-language="en" data-date-week-start="0" data-date-format="yyyy/mm/dd" data-date-start-view="month" data-initial-date="2025-12-20" data-date-autoclose="true"><span class="input-group-addon input-group-prepend input-group-append"><span class="input-group-text"> to </span></span><input class="form-control" type="text" aria-labelledby="date_range-label" title="Date format: yyyy/mm/dd" data-date-language="en" data-date-week-start="0" data-date-format="yyyy/mm/dd" data-date-start-view="month" data-initial-date="2026-06-30" data-date-autoclose="true">
+    <input class="form-control" type="text" aria-labelledby="date_range-label" title="Date format: yyyy/mm/dd" data-date-language="en" data-date-week-start="0" data-date-format="yyyy/mm/dd" data-date-start-view="month" data-initial-date="2025-01-01" data-date-autoclose="true"><span class="input-group-addon input-group-prepend input-group-append"><span class="input-group-text"> to </span></span><input class="form-control" type="text" aria-labelledby="date_range-label" title="Date format: yyyy/mm/dd" data-date-language="en" data-date-week-start="0" data-date-format="yyyy/mm/dd" data-date-start-view="month" data-initial-date="2025-12-31" data-date-autoclose="true">
   </div>
 </div><script type="application/json" data-html-dependency="">{"name": "bootstrap-datepicker", "version": "1.9.0", "source": {"package": "shiny", "subdir": "www/shared/datepicker/"}, "script": [{"src": "js/bootstrap-datepicker.min.js"}], "stylesheet": [{"href": "css/bootstrap-datepicker3.min.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": "<script>(function() { var datepicker = $.fn.datepicker.noConflict(); $.fn.bsDatepicker = datepicker; })();<\/script>"}</script>
-</div>
-<div class="cell-output cell-output-display" data-execution_count="3">
-<div id="arrival_or_departure" class="form-group shiny-input-checkboxgroup shiny-input-container" role="group" aria-labelledby="arrival_or_departure-label">
-  <label class="control-label" id="arrival_or_departure-label" for="arrival_or_departure">Choose airport's type</label>
-  <div class="shiny-options-group">
-    <div class="checkbox">
-      <label><input type="checkbox" name="arrival_or_departure" value="Arrival"> <span>Arrival</span></label>
-    </div>
-    <div class="checkbox">
-      <label><input type="checkbox" name="arrival_or_departure" value="Departure"> <span>Departure</span></label>
-    </div>
-  </div>
-</div>
-</div>
-<div class="cell-output cell-output-display" data-execution_count="3">
-<div id="i_or_d" class="form-group shiny-input-checkboxgroup shiny-input-container" role="group" aria-labelledby="i_or_d-label">
-  <label class="control-label" id="i_or_d-label" for="i_or_d">Choose type of flight</label>
-  <div class="shiny-options-group">
-    <div class="checkbox">
-      <label><input type="checkbox" name="i_or_d" value="International" checked="checked"> <span>International</span></label>
-    </div>
-    <div class="checkbox">
-      <label><input type="checkbox" name="i_or_d" value="Domestic"> <span>Domestic</span></label>
-    </div>
-  </div>
-</div>
 </div>
 </div></aside>
 <button class="collapse-toggle" type="button" title="Toggle sidebar" aria-expanded="true" aria-controls="bslib-sidebar-1">
@@ -224,7 +347,7 @@ grid-auto-rows: minmax(0, 1fr);">
 </div>
 </div>
 </div></div><aside id="bslib-sidebar-2" class="sidebar html-fill-container html-fill-item"><div class="html-fill-item html-fill-container">
-<div class="cell-output cell-output-display no-overflow-x" data-execution_count="10">
+<div class="cell-output cell-output-display no-overflow-x" data-execution_count="26">
 <div class="form-group shiny-input-container">
   <label class="control-label" id="airport_traffic-label" for="airport_traffic">Airport:</label>
   <div>
@@ -279,11 +402,11 @@ grid-auto-rows: minmax(0, 1fr);">
   </div>
 </div>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="10">
+<div class="cell-output cell-output-display" data-execution_count="26">
 <div id="date_range_monthly" class="shiny-date-range-input form-group shiny-input-container">
   <label class="control-label" id="date_range_monthly-label" for="date_range_monthly">Date range input</label>
   <div class="input-daterange input-group input-group-sm">
-    <input class="form-control" type="text" aria-labelledby="date_range_monthly-label" title="Date format: yyyy/mm" data-date-language="en" data-date-week-start="0" data-date-format="yyyy/mm" data-date-start-view="month" data-initial-date="2009-01-01" data-date-autoclose="true"><span class="input-group-addon input-group-prepend input-group-append"><span class="input-group-text"> to </span></span><input class="form-control" type="text" aria-labelledby="date_range_monthly-label" title="Date format: yyyy/mm" data-date-language="en" data-date-week-start="0" data-date-format="yyyy/mm" data-date-start-view="month" data-initial-date="2026-01-01" data-date-autoclose="true">
+    <input class="form-control" type="text" aria-labelledby="date_range_monthly-label" title="Date format: yyyy/mm" data-date-language="en" data-date-week-start="0" data-date-format="yyyy/mm" data-date-start-view="month" data-initial-date="2009-01-01" data-date-autoclose="true"><span class="input-group-addon input-group-prepend input-group-append"><span class="input-group-text"> to </span></span><input class="form-control" type="text" aria-labelledby="date_range_monthly-label" title="Date format: yyyy/mm" data-date-language="en" data-date-week-start="0" data-date-format="yyyy/mm" data-date-start-view="month" data-initial-date="2026-02-01" data-date-autoclose="true">
   </div>
 </div><script type="application/json" data-html-dependency="">{"name": "bootstrap-datepicker", "version": "1.9.0", "source": {"package": "shiny", "subdir": "www/shared/datepicker/"}, "script": [{"src": "js/bootstrap-datepicker.min.js"}], "stylesheet": [{"href": "css/bootstrap-datepicker3.min.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": "<script>(function() { var datepicker = $.fn.datepicker.noConflict(); $.fn.bsDatepicker = datepicker; })();<\/script>"}</script>
 </div>

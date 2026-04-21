@@ -20,7 +20,7 @@ def setup_db():
     CREATE TABLE IF NOT EXISTS ssb_airport_monthly_traffic (
         id SERIAL PRIMARY KEY,
         date DATE NOT NULL,
-        airport_code TEXT NOT NULL,
+        airport_icao_code TEXT NOT NULL,
         arrival_departure traffic_type NOT NULL,
         international_domestic traffic_category NOT NULL,
         flights BIGINT NOT NULL,
@@ -30,7 +30,7 @@ def setup_db():
     """)
 
     cursor.execute("""CREATE UNIQUE INDEX IF NOT EXISTS unique_traffic_entry
-        ON ssb_airport_monthly_traffic (date, airport_code, arrival_departure, international_domestic);""")
+        ON ssb_airport_monthly_traffic (date, airport_icao_code, arrival_departure, international_domestic);""")
     conn.commit()
     cursor.close()
     conn.close()
@@ -39,7 +39,7 @@ def check_table():
     conn = ps_connect()
     cursor = conn.cursor()
     cursor.execute("INSERT INTO ssb_airport_monthly_traffic "
-    "(date, airport_code, arrival_departure, international_domestic, flights, passengers, seats) " \
+    "(date, airport_icao_code, arrival_departure, international_domestic, flights, passengers, seats) " \
     "VALUES ('2023-01-01', 'OSL', 'D', 'I', 1000, 200000, 250000);")
     conn.commit()
     cursor.execute("SELECT * FROM ssb_airport_monthly_traffic;")
