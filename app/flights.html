@@ -76,7 +76,7 @@ ul.task-list li input[type="checkbox"] {
         
       </div>
     </div>
-<div id="dashboard-collapse" class="navbar-collapse collapse"><ul class="navbar-nav navbar-nav-scroll me-auto" role="tablist"><li class="nav-item" role="presentation"><a id="tab-flights-dashboard" class="nav-link active" data-bs-toggle="tab" role="tab" data-bs-target="#flights-dashboard" data-scrolling="false" href="#flights-dashboard" aria-controls="flights-dashboard" aria-selected="true"><span class="nav-link-text">Flights Dashboard</span></a></li><li class="nav-item" role="presentation"><a id="tab-airport-monthly-traffic" class="nav-link" data-bs-toggle="tab" role="tab" data-bs-target="#airport-monthly-traffic" data-scrolling="false" href="#airport-monthly-traffic" aria-controls="airport-monthly-traffic" aria-selected="false"><span class="nav-link-text">Airport Monthly Traffic</span></a></li><li class="nav-item" role="presentation"><a id="tab-map" class="nav-link" data-bs-toggle="tab" role="tab" data-bs-target="#map" data-scrolling="false" href="#map" aria-controls="map" aria-selected="false"><span class="nav-link-text">Map</span></a></li><li class="nav-item" role="presentation"><a id="tab-pivot-ssb" class="nav-link" data-bs-toggle="tab" role="tab" data-bs-target="#pivot-ssb" data-scrolling="false" href="#pivot-ssb" aria-controls="pivot-ssb" aria-selected="false"><span class="nav-link-text">Pivot SSB</span></a></li><li class="nav-item" role="presentation"><a id="tab-pivot-avinor" class="nav-link" data-bs-toggle="tab" role="tab" data-bs-target="#pivot-avinor" data-scrolling="false" href="#pivot-avinor" aria-controls="pivot-avinor" aria-selected="false"><span class="nav-link-text">Pivot AVINOR</span></a></li></ul></div></div>
+<div id="dashboard-collapse" class="navbar-collapse collapse"><ul class="navbar-nav navbar-nav-scroll me-auto" role="tablist"><li class="nav-item" role="presentation"><a id="tab-flights-dashboard" class="nav-link active" data-bs-toggle="tab" role="tab" data-bs-target="#flights-dashboard" data-scrolling="false" href="#flights-dashboard" aria-controls="flights-dashboard" aria-selected="true"><span class="nav-link-text">Flights Dashboard</span></a></li><li class="nav-item" role="presentation"><a id="tab-map" class="nav-link" data-bs-toggle="tab" role="tab" data-bs-target="#map" data-scrolling="false" href="#map" aria-controls="map" aria-selected="false"><span class="nav-link-text">Map</span></a></li><li class="nav-item" role="presentation"><a id="tab-pivot-ssb" class="nav-link" data-bs-toggle="tab" role="tab" data-bs-target="#pivot-ssb" data-scrolling="false" href="#pivot-ssb" aria-controls="pivot-ssb" aria-selected="false"><span class="nav-link-text">Pivot SSB</span></a></li><li class="nav-item" role="presentation"><a id="tab-pivot-avinor" class="nav-link" data-bs-toggle="tab" role="tab" data-bs-target="#pivot-avinor" data-scrolling="false" href="#pivot-avinor" aria-controls="pivot-avinor" aria-selected="false"><span class="nav-link-text">Pivot AVINOR</span></a></li></ul></div></div>
 </nav>
 </header>
 <div class="page-layout-custom quarto-dashboard-content bslib-gap-spacing html-fill-container bslib-page-fill quarto-dashboard-pages">  
@@ -84,9 +84,152 @@ ul.task-list li input[type="checkbox"] {
 <div class="bslib-grid-item html-fill-item tab-content bslib-grid" data-layout="fill" style="display: grid; grid-template-rows: minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
 <div id="flights-dashboard" class="dashboard-page tab-pane show active html-fill-item html-fill-container dashboard-sidebar-container" data-orientation="rows" aria-labelledby="tab-flights-dashboard">
 <div class="bslib-sidebar-layout html-fill-item html-fill-container" data-bslib-sidebar-open="desktop" data-bslib-sidebar-init="true" data-bslib-sidebar-border="false" data-bslib-sidebar-border-radius="false"><div class="main html-fill-container html-fill-item"><div class="sidebar-content html-fill-item html-fill-container">
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 100fr);
+grid-auto-rows: minmax(0, 1fr);">
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 15fr) minmax(3em, 85fr); grid-auto-columns: minmax(0, 1fr);">
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr) minmax(3em, 1fr) minmax(3em, 1fr) minmax(3em, 1fr);
+grid-auto-rows: minmax(0, 1fr);">
+<div class="html-fill-item html-fill-container bslib-grid" style="gap:0px;
+display: grid; grid-template-columns: minmax(3em, 20fr) minmax(3em, 80fr);
+grid-auto-rows: minmax(0, 1fr);">
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+<img src="flights_files/figure-html/cell-17-output-1.png" class="img-fluid quarto-dashboard-img-contain">
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
+</div><div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="17">
+<p><strong>Domestic Departure</strong></p>
+</div>
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+<shiny-data-frame id="dd" class="html-fill-item html-fill-container"></shiny-data-frame><script type="application/json" data-html-dependency="">{"name": "shiny-data-frame-output", "version": "1.6.0", "source": {"package": "shiny", "subdir": "www/py-shiny/data-frame"}, "script": [{"src": "data-frame.js", "type": "module"}], "stylesheet": [], "meta": [], "all_files": false, "head": null}</script>
+<script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
+</div>
+</div><div class="html-fill-item html-fill-container bslib-grid" style="gap:0px;
+display: grid; grid-template-columns: minmax(3em, 20fr) minmax(3em, 80fr);
+grid-auto-rows: minmax(0, 1fr);">
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+<img src="flights_files/figure-html/cell-19-output-1.png" class="img-fluid quarto-dashboard-img-contain">
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
+</div><div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="19">
+<p><strong>Domestic Arrival</strong></p>
+</div>
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+<shiny-data-frame id="da" class="html-fill-item html-fill-container"></shiny-data-frame><script type="application/json" data-html-dependency="">{"name": "shiny-data-frame-output", "version": "1.6.0", "source": {"package": "shiny", "subdir": "www/py-shiny/data-frame"}, "script": [{"src": "data-frame.js", "type": "module"}], "stylesheet": [], "meta": [], "all_files": false, "head": null}</script>
+<script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
+</div>
+</div><div class="html-fill-item html-fill-container bslib-grid" style="gap:0px;
+display: grid; grid-template-columns: minmax(3em, 20fr) minmax(3em, 80fr);
+grid-auto-rows: minmax(0, 1fr);">
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+<img src="flights_files/figure-html/cell-21-output-1.png" class="img-fluid quarto-dashboard-img-contain">
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
+</div><div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="21">
+<p><strong>International Departure</strong></p>
+</div>
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+<shiny-data-frame id="id" class="html-fill-item html-fill-container"></shiny-data-frame><script type="application/json" data-html-dependency="">{"name": "shiny-data-frame-output", "version": "1.6.0", "source": {"package": "shiny", "subdir": "www/py-shiny/data-frame"}, "script": [{"src": "data-frame.js", "type": "module"}], "stylesheet": [], "meta": [], "all_files": false, "head": null}</script>
+<script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
+</div>
+</div><div class="html-fill-item html-fill-container bslib-grid" style="gap:0px;
+display: grid; grid-template-columns: minmax(3em, 20fr) minmax(3em, 80fr);
+grid-auto-rows: minmax(0, 1fr);">
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+<img src="flights_files/figure-html/cell-23-output-1.png" class="img-fluid quarto-dashboard-img-contain">
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
+</div><div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+<div class="card-body html-fill-item html-fill-container">
+<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="23">
+<p><strong>International Arrival</strong></p>
+</div>
+<div class="cell-output cell-output-display html-fill-item html-fill-container">
+<shiny-data-frame id="ia" class="html-fill-item html-fill-container"></shiny-data-frame><script type="application/json" data-html-dependency="">{"name": "shiny-data-frame-output", "version": "1.6.0", "source": {"package": "shiny", "subdir": "www/py-shiny/data-frame"}, "script": [{"src": "data-frame.js", "type": "module"}], "stylesheet": [], "meta": [], "all_files": false, "head": null}</script>
+<script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
+</div>
+</div>
+<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
+    <template>Expand</template>
+    <span class="bslib-full-screen-enter badge rounded-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
+    </span>
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
+</div>
+</div>
+</div>
 <div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 50fr) minmax(3em, 50fr);
 grid-auto-rows: minmax(0, 1fr);">
-<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 40fr) minmax(3em, 40fr) minmax(3em, 20fr); grid-auto-columns: minmax(0, 1fr);">
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 50fr) minmax(3em, 50fr); grid-auto-columns: minmax(0, 1fr);">
 <div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr);
 grid-auto-rows: minmax(0, 1fr);">
 <div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
@@ -104,8 +247,9 @@ grid-auto-rows: minmax(0, 1fr);">
     </span>
 </bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
 </div>
-<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr);
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 50%&quot;) minmax(3em, 50%&quot;);
 grid-auto-rows: minmax(0, 1fr);">
+<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
 <div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-body html-fill-item html-fill-container">
 <div class="cell-output cell-output-display html-fill-item html-fill-container">
@@ -120,9 +264,7 @@ grid-auto-rows: minmax(0, 1fr);">
         <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
     </span>
 </bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
-</div>
-<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr);
-grid-auto-rows: minmax(0, 1fr);">
+</div><div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
 <div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-body html-fill-item html-fill-container">
 <div class="cell-output cell-output-display html-fill-item html-fill-container">
@@ -138,8 +280,11 @@ grid-auto-rows: minmax(0, 1fr);">
     </span>
 </bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
 </div>
-</div><div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 30fr) minmax(3em, 52fr) minmax(3em, 18fr); grid-auto-columns: minmax(0, 1fr);">
-<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr) minmax(3em, 1fr) minmax(3em, 1fr);
+</div>
+</div><div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr) minmax(3em, 1fr);
+grid-auto-rows: minmax(0, 1fr);">
+<div class="html-fill-item html-fill-container bslib-grid" data-height="50%" style="display: grid; grid-template-rows: minmax(3em, 1fr) minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
+<div class="html-fill-item html-fill-container bslib-grid" data-width="50%&quot;" style="display: grid; grid-template-columns: minmax(3em, 1fr);
 grid-auto-rows: minmax(0, 1fr);">
 <div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-body html-fill-item html-fill-container">
@@ -154,7 +299,11 @@ grid-auto-rows: minmax(0, 1fr);">
     <span class="bslib-full-screen-enter badge rounded-pill">
         <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
     </span>
-</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div><div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
+</div>
+<div class="html-fill-item html-fill-container bslib-grid" data-width="50%&quot;" style="display: grid; grid-template-columns: minmax(3em, 1fr);
+grid-auto-rows: minmax(0, 1fr);">
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-body html-fill-item html-fill-container">
 <div class="cell-output cell-output-display html-fill-item html-fill-container">
 <div id="plot_weekly_traffic" class="shiny-ipywidget-output shiny-report-size shiny-report-theme html-fill-item html-fill-container"></div><script type="application/json" data-html-dependency="">{"name": "ipywidget-output-binding", "version": "0.8.0", "source": {"package": "shinywidgets", "subdir": "static"}, "script": [{"src": "libembed-amd.js"}, {"src": "output.js"}], "stylesheet": [{"href": "shinywidgets.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
@@ -167,7 +316,12 @@ grid-auto-rows: minmax(0, 1fr);">
     <span class="bslib-full-screen-enter badge rounded-pill">
         <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
     </span>
-</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div><div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
+</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
+</div>
+</div><div class="html-fill-item html-fill-container bslib-grid" data-height="50%" style="display: grid; grid-template-rows: minmax(3em, 1fr) minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
+<div class="html-fill-item html-fill-container bslib-grid" data-width="50%" style="display: grid; grid-template-columns: minmax(3em, 1fr);
+grid-auto-rows: minmax(0, 1fr);">
+<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-body html-fill-item html-fill-container">
 <div class="cell-output cell-output-display html-fill-item html-fill-container">
 <div id="plot_hourly_traffic" class="shiny-ipywidget-output shiny-report-size shiny-report-theme html-fill-item html-fill-container"></div><script type="application/json" data-html-dependency="">{"name": "ipywidget-output-binding", "version": "0.8.0", "source": {"package": "shinywidgets", "subdir": "static"}, "script": [{"src": "libembed-amd.js"}, {"src": "output.js"}], "stylesheet": [{"href": "shinywidgets.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
@@ -182,7 +336,7 @@ grid-auto-rows: minmax(0, 1fr);">
     </span>
 </bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
 </div>
-<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr);
+<div class="html-fill-item html-fill-container bslib-grid" data-width="50%" style="display: grid; grid-template-columns: minmax(3em, 1fr);
 grid-auto-rows: minmax(0, 1fr);">
 <div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-body html-fill-item html-fill-container">
@@ -199,79 +353,17 @@ grid-auto-rows: minmax(0, 1fr);">
     </span>
 </bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
 </div>
-<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr) minmax(3em, 1fr) minmax(3em, 1fr) minmax(3em, 1fr);
-grid-auto-rows: minmax(0, 1fr);">
-<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
-<div class="card-body html-fill-item html-fill-container">
-<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="21">
-<p>Domestic Departure</p>
-</div>
-<div class="cell-output cell-output-display html-fill-item html-fill-container">
-<shiny-data-frame id="dd" class="html-fill-item html-fill-container"></shiny-data-frame><script type="application/json" data-html-dependency="">{"name": "shiny-data-frame-output", "version": "1.6.0", "source": {"package": "shiny", "subdir": "www/py-shiny/data-frame"}, "script": [{"src": "data-frame.js", "type": "module"}], "stylesheet": [], "meta": [], "all_files": false, "head": null}</script>
-<script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
 </div>
 </div>
-<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
-    <template>Expand</template>
-    <span class="bslib-full-screen-enter badge rounded-pill">
-        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
-    </span>
-</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div><div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
-<div class="card-body html-fill-item html-fill-container">
-<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="22">
-<p>Domestic Arrival</p>
-</div>
-<div class="cell-output cell-output-display html-fill-item html-fill-container">
-<shiny-data-frame id="da" class="html-fill-item html-fill-container"></shiny-data-frame><script type="application/json" data-html-dependency="">{"name": "shiny-data-frame-output", "version": "1.6.0", "source": {"package": "shiny", "subdir": "www/py-shiny/data-frame"}, "script": [{"src": "data-frame.js", "type": "module"}], "stylesheet": [], "meta": [], "all_files": false, "head": null}</script>
-<script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
-</div>
-</div>
-<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
-    <template>Expand</template>
-    <span class="bslib-full-screen-enter badge rounded-pill">
-        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
-    </span>
-</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div><div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
-<div class="card-body html-fill-item html-fill-container">
-<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="23">
-<p>International Departure</p>
-</div>
-<div class="cell-output cell-output-display html-fill-item html-fill-container">
-<shiny-data-frame id="id" class="html-fill-item html-fill-container"></shiny-data-frame><script type="application/json" data-html-dependency="">{"name": "shiny-data-frame-output", "version": "1.6.0", "source": {"package": "shiny", "subdir": "www/py-shiny/data-frame"}, "script": [{"src": "data-frame.js", "type": "module"}], "stylesheet": [], "meta": [], "all_files": false, "head": null}</script>
-<script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
-</div>
-</div>
-<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
-    <template>Expand</template>
-    <span class="bslib-full-screen-enter badge rounded-pill">
-        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
-    </span>
-</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div><div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
-<div class="card-body html-fill-item html-fill-container">
-<div class="cell-output cell-output-display html-fill-item html-fill-container" data-execution_count="24">
-<p>International Arrival</p>
-</div>
-<div class="cell-output cell-output-display html-fill-item html-fill-container">
-<shiny-data-frame id="ia" class="html-fill-item html-fill-container"></shiny-data-frame><script type="application/json" data-html-dependency="">{"name": "shiny-data-frame-output", "version": "1.6.0", "source": {"package": "shiny", "subdir": "www/py-shiny/data-frame"}, "script": [{"src": "data-frame.js", "type": "module"}], "stylesheet": [], "meta": [], "all_files": false, "head": null}</script>
-<script type="application/json" data-html-dependency="">{"name": "htmltools-fill", "version": "0.5.9.9000", "source": {"package": "shiny", "subdir": "www/shared/htmltools/fill"}, "script": [], "stylesheet": [{"href": "fill.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": null}</script>
-</div>
-</div>
-<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
-    <template>Expand</template>
-    <span class="bslib-full-screen-enter badge rounded-pill">
-        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
-    </span>
-</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
 </div>
 </div>
 </div>
 </div></div><aside id="bslib-sidebar-1" class="sidebar html-fill-container html-fill-item"><div class="html-fill-item html-fill-container">
-<div class="cell-output cell-output-display no-overflow-x" data-execution_count="3">
+<div class="cell-output cell-output-display no-overflow-x" data-execution_count="6">
 <div class="form-group shiny-input-container">
   <label class="control-label" id="airport-label" for="airport">Airport:</label>
   <div>
-    <select class="shiny-input-select form-select" id="airport">      <option></option>
-      <option value="AES">AES</option>
+    <select class="shiny-input-select form-select" id="airport">      <option value="AES">AES</option>
       <option value="ALF">ALF</option>
       <option value="ANX">ANX</option>
       <option value="BDU">BDU</option>
@@ -321,110 +413,8 @@ grid-auto-rows: minmax(0, 1fr);">
   </div>
 </div>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="3">
-<div id="date_range" class="shiny-date-range-input form-group shiny-input-container">
-  <label class="control-label" id="date_range-label" for="date_range">Date range input</label>
-  <div class="input-daterange input-group input-group-sm">
-    <input class="form-control" type="text" aria-labelledby="date_range-label" title="Date format: yyyy/mm/dd" data-date-language="en" data-date-week-start="0" data-date-format="yyyy/mm/dd" data-date-start-view="month" data-initial-date="2025-01-01" data-date-autoclose="true"><span class="input-group-addon input-group-prepend input-group-append"><span class="input-group-text"> to </span></span><input class="form-control" type="text" aria-labelledby="date_range-label" title="Date format: yyyy/mm/dd" data-date-language="en" data-date-week-start="0" data-date-format="yyyy/mm/dd" data-date-start-view="month" data-initial-date="2025-12-31" data-date-autoclose="true">
-  </div>
-</div><script type="application/json" data-html-dependency="">{"name": "bootstrap-datepicker", "version": "1.9.0", "source": {"package": "shiny", "subdir": "www/shared/datepicker/"}, "script": [{"src": "js/bootstrap-datepicker.min.js"}], "stylesheet": [{"href": "css/bootstrap-datepicker3.min.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": "<script>(function() { var datepicker = $.fn.datepicker.noConflict(); $.fn.bsDatepicker = datepicker; })();<\/script>"}</script>
-</div>
 </div></aside>
 <button class="collapse-toggle" type="button" title="Toggle sidebar" aria-expanded="true" aria-controls="bslib-sidebar-1">
-    <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 16 16" class="bi bi-chevron-left collapse-icon" style="fill:currentColor;" aria-hidden="true" role="img">
-      <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"></path>
-    </svg>
-</button>
-<script data-bslib-sidebar-init="">
-bslib.Sidebar.initCollapsibleAll()
-</script>
-</div>
-</div>
-<div id="airport-monthly-traffic" class="dashboard-page tab-pane grid-skip html-fill-item html-fill-container dashboard-sidebar-container" data-orientation="rows" aria-labelledby="tab-airport-monthly-traffic">
-<div class="bslib-sidebar-layout html-fill-item html-fill-container" data-bslib-sidebar-open="desktop" data-bslib-sidebar-init="true"><div class="main html-fill-container html-fill-item"><div class="sidebar-content html-fill-item html-fill-container">
-<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr);
-grid-auto-rows: minmax(0, 1fr);">
-<div class="html-fill-item html-fill-container bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
-<div class="card cell html-fill-item html-fill-container bslib-card" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
-<div class="card-body html-fill-item html-fill-container">
-<div class="cell-output cell-output-display html-fill-item html-fill-container no-overflow-x">
-<div class="shiny-html-output html-fill-item html-fill-container" id="display_monthly_traffic"></div>
-</div>
-</div>
-<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
-    <template>Expand</template>
-    <span class="bslib-full-screen-enter badge rounded-pill">
-        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
-    </span>
-</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
-</div>
-</div>
-</div></div><aside id="bslib-sidebar-2" class="sidebar html-fill-container html-fill-item"><div class="html-fill-item html-fill-container">
-<div class="cell-output cell-output-display no-overflow-x" data-execution_count="26">
-<div class="form-group shiny-input-container">
-  <label class="control-label" id="airport_traffic-label" for="airport_traffic">Airport:</label>
-  <div>
-    <select class="shiny-input-select form-select" id="airport_traffic">      <option selected=""></option>
-      <option value="AES">AES</option>
-      <option value="ALF">ALF</option>
-      <option value="ANX">ANX</option>
-      <option value="BDU">BDU</option>
-      <option value="BGO">BGO</option>
-      <option value="BJF">BJF</option>
-      <option value="BNN">BNN</option>
-      <option value="BOO">BOO</option>
-      <option value="BVG">BVG</option>
-      <option value="EVE">EVE</option>
-      <option value="FDE">FDE</option>
-      <option value="FRO">FRO</option>
-      <option value="HAA">HAA</option>
-      <option value="HAU">HAU</option>
-      <option value="HFT">HFT</option>
-      <option value="HOV">HOV</option>
-      <option value="HVG">HVG</option>
-      <option value="KKN">KKN</option>
-      <option value="KRS">KRS</option>
-      <option value="KSU">KSU</option>
-      <option value="LKL">LKL</option>
-      <option value="LKN">LKN</option>
-      <option value="LYR">LYR</option>
-      <option value="MEH">MEH</option>
-      <option value="MJF">MJF</option>
-      <option value="MOL">MOL</option>
-      <option value="MQN">MQN</option>
-      <option value="NTB">NTB</option>
-      <option value="OLA">OLA</option>
-      <option value="OSL">OSL</option>
-      <option value="OSY">OSY</option>
-      <option value="RET">RET</option>
-      <option value="RRS">RRS</option>
-      <option value="RVK">RVK</option>
-      <option value="SDN">SDN</option>
-      <option value="SKN">SKN</option>
-      <option value="SOG">SOG</option>
-      <option value="SOJ">SOJ</option>
-      <option value="SRP">SRP</option>
-      <option value="SSJ">SSJ</option>
-      <option value="SVG">SVG</option>
-      <option value="SVJ">SVJ</option>
-      <option value="TOS">TOS</option>
-      <option value="TRD">TRD</option>
-      <option value="TRF">TRF</option>
-      <option value="VAW">VAW</option>
-      <option value="VDS">VDS</option></select>
-  </div>
-</div>
-</div>
-<div class="cell-output cell-output-display" data-execution_count="26">
-<div id="date_range_monthly" class="shiny-date-range-input form-group shiny-input-container">
-  <label class="control-label" id="date_range_monthly-label" for="date_range_monthly">Date range input</label>
-  <div class="input-daterange input-group input-group-sm">
-    <input class="form-control" type="text" aria-labelledby="date_range_monthly-label" title="Date format: yyyy/mm" data-date-language="en" data-date-week-start="0" data-date-format="yyyy/mm" data-date-start-view="month" data-initial-date="2009-01-01" data-date-autoclose="true"><span class="input-group-addon input-group-prepend input-group-append"><span class="input-group-text"> to </span></span><input class="form-control" type="text" aria-labelledby="date_range_monthly-label" title="Date format: yyyy/mm" data-date-language="en" data-date-week-start="0" data-date-format="yyyy/mm" data-date-start-view="month" data-initial-date="2026-02-01" data-date-autoclose="true">
-  </div>
-</div><script type="application/json" data-html-dependency="">{"name": "bootstrap-datepicker", "version": "1.9.0", "source": {"package": "shiny", "subdir": "www/shared/datepicker/"}, "script": [{"src": "js/bootstrap-datepicker.min.js"}], "stylesheet": [{"href": "css/bootstrap-datepicker3.min.css", "rel": "stylesheet"}], "meta": [], "all_files": false, "head": "<script>(function() { var datepicker = $.fn.datepicker.noConflict(); $.fn.bsDatepicker = datepicker; })();<\/script>"}</script>
-</div>
-</div></aside>
-<button class="collapse-toggle" type="button" title="Toggle sidebar" aria-expanded="true" aria-controls="bslib-sidebar-2">
     <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 16 16" class="bi bi-chevron-left collapse-icon" style="fill:currentColor;" aria-hidden="true" role="img">
       <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"></path>
     </svg>

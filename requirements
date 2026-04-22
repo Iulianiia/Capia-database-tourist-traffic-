@@ -7,3 +7,8 @@ dotenv
 setuptools<82
 matplotlib
 plotly
+quarto
+shinywidgets
+ipyleaflet
+statsmodels
+pmdarima

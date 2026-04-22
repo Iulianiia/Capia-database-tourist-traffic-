@@ -1,0 +1,317 @@
+{
+ "version": "v1",
+ "config": {
+  "visState": {
+   "filters": [
+    {
+     "dataId": [
+      "Intra flights"
+     ],
+     "id": "39u676qs",
+     "name": [
+      "datetime"
+     ],
+     "type": "multiSelect",
+     "value": [
+      "2026-01-01"
+     ],
+     "plotType": "histogram",
+     "animationWindow": "free",
+     "yAxis": null,
+     "view": "side",
+     "speed": 1,
+     "enabled": true
+    }
+   ],
+   "layers": [
+    {
+     "id": "cf0qwir",
+     "type": "point",
+     "config": {
+      "dataId": "Intra flights",
+      "label": "deg_from",
+      "color": [
+       30,
+       150,
+       190
+      ],
+      "highlightColor": [
+       252,
+       242,
+       26,
+       255
+      ],
+      "columns": {
+       "lat": "latitude_deg_from",
+       "lng": "longitude_deg_from"
+      },
+      "isVisible": true,
+      "visConfig": {
+       "radius": 7,
+       "fixedRadius": false,
+       "opacity": 0.8,
+       "outline": false,
+       "thickness": 2,
+       "strokeColor": null,
+       "colorRange": {
+        "name": "Uber Viz Sequential 4",
+        "type": "sequential",
+        "category": "Uber",
+        "colors": [
+         "#E6FAFA",
+         "#C1E5E6",
+         "#9DD0D4",
+         "#75BBC1",
+         "#4BA7AF",
+         "#00939C"
+        ]
+       },
+       "strokeColorRange": {
+        "name": "Global Warming",
+        "type": "sequential",
+        "category": "Uber",
+        "colors": [
+         "#5A1846",
+         "#900C3F",
+         "#C70039",
+         "#E3611C",
+         "#F1920E",
+         "#FFC300"
+        ]
+       },
+       "radiusRange": [
+        0,
+        50
+       ],
+       "filled": true
+      },
+      "hidden": false,
+      "textLabel": [
+       {
+        "field": null,
+        "color": [
+         255,
+         255,
+         255
+        ],
+        "size": 18,
+        "offset": [
+         0,
+         0
+        ],
+        "anchor": "start",
+        "alignment": "center",
+        "outlineWidth": 0,
+        "outlineColor": [
+         255,
+         0,
+         0,
+         255
+        ],
+        "background": false,
+        "backgroundColor": [
+         0,
+         0,
+         200,
+         255
+        ]
+       }
+      ]
+     },
+     "visualChannels": {
+      "colorField": {
+       "name": "n_flights",
+       "type": "integer"
+      },
+      "colorScale": "quantile",
+      "strokeColorField": null,
+      "strokeColorScale": "quantile",
+      "sizeField": null,
+      "sizeScale": "linear"
+     }
+    },
+    {
+     "id": "0zbdx6",
+     "type": "arc",
+     "config": {
+      "dataId": "Intra flights",
+      "label": "deg_from -> deg_to arc",
+      "color": [
+       146,
+       38,
+       198
+      ],
+      "highlightColor": [
+       252,
+       242,
+       26,
+       255
+      ],
+      "columns": {
+       "lat0": "latitude_deg_from",
+       "lng0": "longitude_deg_from",
+       "lat1": "latitude_deg_to",
+       "lng1": "longitude_deg_to"
+      },
+      "isVisible": true,
+      "visConfig": {
+       "opacity": 0.8,
+       "thickness": 1,
+       "colorRange": {
+        "name": "Uber Viz Diverging 1.5",
+        "type": "diverging",
+        "category": "Uber",
+        "colors": [
+         "#00939C",
+         "#5DBABF",
+         "#BAE1E2",
+         "#F8C0AA",
+         "#DD7755",
+         "#C22E00"
+        ]
+       },
+       "sizeRange": [
+        1,
+        1.7
+       ],
+       "targetColor": null
+      },
+      "hidden": false,
+      "textLabel": [
+       {
+        "field": null,
+        "color": [
+         255,
+         255,
+         255
+        ],
+        "size": 18,
+        "offset": [
+         0,
+         0
+        ],
+        "anchor": "start",
+        "alignment": "center",
+        "outlineWidth": 0,
+        "outlineColor": [
+         255,
+         0,
+         0,
+         255
+        ],
+        "background": false,
+        "backgroundColor": [
+         0,
+         0,
+         200,
+         255
+        ]
+       }
+      ]
+     },
+     "visualChannels": {
+      "colorField": {
+       "name": "seats",
+       "type": "integer"
+      },
+      "colorScale": "quantile",
+      "sizeField": {
+       "name": "n_flights",
+       "type": "integer"
+      },
+      "sizeScale": "sqrt"
+     }
+    }
+   ],
+   "effects": [],
+   "interactionConfig": {
+    "tooltip": {
+     "fieldsToShow": {
+      "Intra flights": [
+       {
+        "name": "from airport",
+        "format": null
+       },
+       {
+        "name": "from_code",
+        "format": null
+       },
+       {
+        "name": "arrival airport",
+        "format": null
+       },
+       {
+        "name": "datetime",
+        "format": null
+       },
+       {
+        "name": "to_code",
+        "format": null
+       }
+      ]
+     },
+     "compareMode": false,
+     "compareType": "absolute",
+     "enabled": true
+    },
+    "brush": {
+     "size": 0.5,
+     "enabled": false
+    },
+    "geocoder": {
+     "enabled": false
+    },
+    "coordinate": {
+     "enabled": false
+    }
+   },
+   "layerBlending": "normal",
+   "overlayBlending": "normal",
+   "splitMaps": [],
+   "animationConfig": {
+    "currentTime": null,
+    "speed": 1
+   },
+   "editor": {
+    "features": [],
+    "visible": true
+   }
+  },
+  "mapState": {
+   "bearing": -43.274548477902385,
+   "dragRotate": true,
+   "latitude": 64.60012060473069,
+   "longitude": 18.768370793407552,
+   "pitch": 59.8309521403026,
+   "zoom": 3.620163690018412,
+   "isSplit": false,
+   "isViewportSynced": true,
+   "isZoomLocked": false,
+   "splitMapViewports": []
+  },
+  "mapStyle": {
+   "styleType": "dark-matter",
+   "topLayerGroups": {},
+   "visibleLayerGroups": {
+    "label": true,
+    "road": true,
+    "border": false,
+    "building": true,
+    "water": true,
+    "land": true,
+    "3d building": false
+   },
+   "threeDBuildingColor": [
+    15.035172933000911,
+    15.035172933000911,
+    15.035172933000911
+   ],
+   "backgroundColor": [
+    0,
+    0,
+    0
+   ],
+   "mapStyles": {}
+  }
+ }
+}
