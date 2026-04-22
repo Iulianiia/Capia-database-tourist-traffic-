@@ -65,8 +65,15 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
 
     # ========================================================================
 
+    import json
     with open('map_config.json', 'r') as fp:
-            map_config = json.load(fp)
+        map_config = json.load(fp)
+    print(type(map_config))
+    print(map_config.keys())
+    # print(map_config)
+
+    # ========================================================================
+
     # SSB AIRPORT MONTHLY TRAFFIC + IATA CODE + ISO COUNTRY
     query = "SELECT * from ssb_airport_monthly_traffic"
     df_airport_monthly_traffic = pl.read_database(query, conn)
@@ -1082,7 +1089,7 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
     return None
 
 
-_static_assets = ["flights_files","app\\flights_files\\figure-html\\cell-17-output-1.png","app\\flights_files\\figure-html\\cell-19-output-1.png","app\\flights_files\\figure-html\\cell-21-output-1.png","app\\flights_files\\figure-html\\cell-23-output-1.png","app\\flights_files\\libs\\quarto-html\\tippy.css","app\\flights_files\\libs\\quarto-html\\quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css","app\\flights_files\\libs\\quarto-html\\quarto-syntax-highlighting-dark-f418161beb48e0141c760e455f12af2c.css","app\\flights_files\\libs\\bootstrap\\bootstrap-icons.css","app\\flights_files\\libs\\bootstrap\\bootstrap-6a298fde403041579a69b2204f21ed52.min.css","app\\flights_files\\libs\\bootstrap\\bootstrap-dark-6a298fde403041579a69b2204f21ed52.min.css","app\\flights_files\\libs\\clipboard\\clipboard.min.js","app\\flights_files\\libs\\quarto-html\\quarto.js","app\\flights_files\\libs\\quarto-html\\tabsets\\tabsets.js","app\\flights_files\\libs\\quarto-html\\popper.min.js","app\\flights_files\\libs\\quarto-html\\tippy.umd.min.js","app\\flights_files\\libs\\quarto-html\\anchor.min.js","app\\flights_files\\libs\\bootstrap\\bootstrap.min.js","app\\flights_files\\libs\\quarto-dashboard\\quarto-dashboard.js","app\\flights_files\\libs\\quarto-dashboard\\stickythead.js","app\\flights_files\\libs\\quarto-dashboard\\web-components.js","app\\flights_files\\libs\\quarto-dashboard\\components.js"]
+_static_assets = ##STATIC_ASSETS_PLACEHOLDER##
 _static_assets = {"/" + sa: Path(__file__).parent / sa for sa in _static_assets}
 
 app = App(

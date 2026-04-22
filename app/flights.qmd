@@ -60,10 +60,17 @@ df_airports = df_airports_all.select(pl.col("name"), pl.col("latitude_deg"), pl.
 df_airports_code = df_airports_all.select(pl.col("icao_code"), pl.col("iata_code"), pl.col("iso_country"))
 ```
 ```{python}
+import json
+with open('map_config.json', 'r') as fp:
+    map_config = json.load(fp)
+print(type(map_config))
+print(map_config.keys())
+# print(map_config)
+```
+```{python}
 
 
-# with open('map_config.json', 'r') as fp:
-#         map_config = json.load(fp)
+
 # SSB AIRPORT MONTHLY TRAFFIC + IATA CODE + ISO COUNTRY
 query = "SELECT * from ssb_airport_monthly_traffic"
 df_airport_monthly_traffic = pl.read_database(query, conn)
@@ -695,6 +702,7 @@ def my_plot():
     )
     
     fig.update_layout(
+        autosize=True,
         title='Passengers: Historical vs Forecast',
         xaxis_title='Date',
         yaxis_title='Passengers',
@@ -761,6 +769,7 @@ def render_flights_years():
     )
 
     fig.update_layout(
+        autosize=True,
         xaxis_title="Month",
         yaxis_title="Flights",
         legend_title="Year",
@@ -821,6 +830,7 @@ def plot_domestic_internatinal():
     )
 
     fig.update_layout(
+        autosize=True,
         xaxis_title="Month",
         yaxis_title="Flights",
         legend_title="Type",
@@ -890,6 +900,7 @@ def plot_arival_departure_growth():
     line_width=2
     )
     fig.update_layout(
+        autosize=True,
         xaxis_title="Month",
         yaxis_title="Passengers (Arrival - Departure)",
         template="plotly_white"
@@ -941,11 +952,12 @@ def plot_weekly_traffic():
         }
     )
     fig.update_layout(
-        xaxis_title="Hour of Day",
+        xaxis_title="Week day",
         yaxis_title="Flights",
         legend_title="Type",
         template="plotly_white",
-        paper_bgcolor="white"
+        paper_bgcolor="white",
+        utosize=True
     )
 
     return fig
@@ -995,6 +1007,7 @@ def plot_hourly_traffic():
         }
     )
     fig.update_layout(
+        autosize=True,
         xaxis_title="Hour of Day",
         yaxis_title="Flights",
         legend_title="Type",
@@ -1100,7 +1113,7 @@ def display_map():
     map_1 = KeplerGl(
         height=600, 
         data={"Intra flights": df_avinor_kepler.to_pandas().dropna()},
-        # config=map_config
+        config=map_config
     )
     # map_1.add_data(data=df_avinor.to_pandas().dropna(), name="flights")
 
