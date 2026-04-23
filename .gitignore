@@ -41,5 +41,5 @@ seats_by_model.py
 /.quarto/
 **/*.quarto_ipynb
 flights.quarto_ipynb_*
-*.txt
+
 *.png
