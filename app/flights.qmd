@@ -2,170 +2,1154 @@
 title: "Flights Dashboard"
 format: dashboard
 server: shiny
-jupyter: venv_311
-theme: slate
+loading: lazy
+envvars: 
+    PYTHONUTF8: "1"
+    PYTHONIOENCODING: "utf-8"
+    LANG: "en_US.UTF-8"
+# theme: slate
 ---
 
 
 ```{python}
-import sys
-sys.executable
+# IMPORT LIBRARIES
 import polars as pl
 import pygwalker as pyg
+import plotly.express as px
+from pmdarima import auto_arima
 import psycopg2
+import pandas as pd
+from statsmodels.tsa.stattools import adfuller
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+from plotly.subplots import make_subplots
 from src.db_connect import ps_connect
-from keplergl import KeplerGl
 
+
+from keplergl import KeplerGl
+from shinywidgets import render_widget, render_plotly
+import matplotlib.pyplot as plt
+from datetime import datetime
+import plotly.graph_objects as go
+from ipyleaflet import Map, Polyline, CircleMarker, Marker
+from shiny import render, reactive, ui
+# from shiny.express import render, ui,  input
+
+from datetime import date
+import base64
+import calendar
+from dateutil.relativedelta import relativedelta
+from IPython.display import HTML
+import json
+
+# from sklearn.metrics import mean_absolute_error, mean_squared_error
+```
+```{python}
+# CONNECT TO DATABASE AND LOAD DATA
 conn = ps_connect()
 cursor = conn.cursor()
-query = "SELECT airline_designator_iata, departure_airport_iata, date_time_of_departure::date, arrival_airport_iata, date_time_of_arrival::date, seats FROM avinor_flights"
-df_avinor_flights = pl.read_database(query, conn)
-
-query = "SELECT name, latitude_deg, longitude_deg, iata_code, iso_country FROM airports"
-df_airports = pl.read_database(query, conn)
-df_airports = df_airports.filter(pl.col("iata_code").is_not_null())
-
-query = " select icao_code, iata_code from airports where icao_code is not null"
-df_airports_icao = pl.read_database(query, conn)
-
-query = "SELECT * from ssb_airport_monthly_traffic"
+```
+```{python}
+# AIRPORT'S LOCATIONS
+query = """SELECT 
+        name, latitude_deg, longitude_deg, iso_country, icao_code, iata_code
+        FROM airports
+        WHERE iata_code IS NOT NULL"""
+df_airports_all = pl.read_database(query, conn)
+df_airports = df_airports_all.select(pl.col("name"), pl.col("latitude_deg"), pl.col("longitude_deg"), pl.col("iata_code"))
+# tromso_airport = df_airports_all.filter(pl.col("iata_code") == "TOS").select(pl.col("name").first())
+# print(tromso_airport)
+# AIRPORT'S CODES
+# query = " select icao_code, iata_code, iso_country from airports where icao_code is not null"
+df_airports_code = df_airports_all.select(pl.col("icao_code"), pl.col("iata_code"), pl.col("iso_country"), pl.col("name"))
+```
+```{python}
+# SSB AIRPORT MONTHLY TRAFFIC + IATA CODE + ISO COUNTRY 
+# DROP ROWS WITH NOTOODEN AIRPORT BECAUSE THEY ARE NOT IN AVINOR DATASET
+# NOTOODEN AIRPORT HAS NOT ANY TRAFFIC FOR NAOW AT ALL
+query = "SELECT * from ssb_airport_monthly_traffic "
 df_airport_monthly_traffic = pl.read_database(query, conn)
-# df_airports_icao = df_airports_icao.with_columns(pl.col("icao_code").cast(pl.Utf8))
-df_airport_monthly_traffic = df_airport_monthly_traffic.join(df_airports_icao, left_on="airport_icao_code", right_on="icao_code")
+df_airport_monthly_traffic =(df_airport_monthly_traffic.filter(
+    pl.col("airport_icao_code") != "ENNO"
+).join(
+    df_airports_code,
+    left_on="airport_icao_code", 
+    right_on="icao_code"
+))
+```
+```{python}
+# AVINOR FLIGHTS + ISO_COUNTRY + AIRPORTS CODES
+query = """SELECT  date_time_of_departure, departure_airport_iata, 
+ date_time_of_arrival,arrival_airport_iata,
+  aircraft_type, seats from avinor_flights"""
+df_avinor_all = pl.read_database(query, conn)
+```
+```{python}
+# CONSTANTS FOR AVINOR
+START_DATE_AVINOR = date(2026, 1, 1)
+END_DATE_AVINOR = date(2026, 9, 30)
+LAST_MONTH_AVINOR = END_DATE_AVINOR.replace(day=1)
 
-df_flights = df_avinor_flights.join(df_airports, left_on="departure_airport_iata", right_on="iata_code", suffix="_departure").join(df_airports, left_on="arrival_airport_iata", right_on="iata_code", suffix="_arrival")
+#CONSTANTS FOR SSB
+START_DATE_SSB = date(2020, 1, 1)
+END_DATE_SSB = (
+    df_airport_monthly_traffic
+    .select(pl.col("date").max())
+    .item()
+)
+LAST_YEAR_SSB = END_DATE_SSB  - relativedelta(years=1)
+```
+```{python}
+# PREPARE AVINOR DATA FOR KEPLER GL 
+# WE TACE LON_DEG LAT_DEG FROM AIRPORTS DATASET AND 
+# JOIN WITH AVINOR DATASET TO GET THE LOCATIONS OF DEPARTURE AND ARRIVAL AIRPORTS
+df_avinor_kepler = df_avinor_all.select(pl.col("date_time_of_departure").dt.date().alias("dep_date"),
+ pl.col("departure_airport_iata"), pl.col("date_time_of_arrival").dt.date().alias("arr_date"), pl.col("arrival_airport_iata" ))
 
-query = "SELECT * from avinor_flights"
-df_avinor = pl.read_database(query, conn)
-df_avinor=df_avinor.join(df_airports, left_on="departure_airport_iata", right_on="iata_code", suffix="_departure").join(df_airports, left_on="arrival_airport_iata", right_on="iata_code", suffix="_arrival")
-# df_avinor = df_avinor.with_columns(pl.col("date_time_of_arrival").cast(pl.Date).alias("date_of_arrival"), pl.col("date_time_of_arrival").cast(pl.Time).alias("time_of_arrival"), pl.col("date_time_of_departure").cast(pl.Date).alias("date_of_departure"), pl.col("date_time_of_departure").cast(pl.Time).alias("time_of_departure"))
+df_dep = df_airports.rename({
+    "latitude_deg": "dep_lat",
+    "longitude_deg": "dep_lon",
+    "name":"dep_name"
+})
 
+df_arr = df_airports.rename({
+    "latitude_deg": "arr_lat",
+    "longitude_deg": "arr_lon",
+    "name":"arr_name"
+})
+df_avinor_kepler = (
+    df_avinor_kepler
+    .join(df_dep, left_on="departure_airport_iata", right_on="iata_code")
+    .join(df_arr, left_on="arrival_airport_iata", right_on="iata_code")
+)
+df_avinor_kepler = df_avinor_kepler.rename({
+    "departure_airport_iata": "dep_iata",
+    "arrival_airport_iata": "arr_iata"
+})
+```
+```{python}
+# WE NEED ICAO CODE AND ISO COUNTRY TO DETERMINE IF FLIGHT IS DOMESTIC OR INTERNATIONAL
+# JOIN AVINOR DATA WITH AIRPORTS CODES 
+df_avinor = df_avinor_all.join(
+    df_airports_code,
+    left_on="departure_airport_iata",
+    right_on="iata_code",
+    suffix="_departure"
+).join(
+    df_airports_code,
+    left_on="arrival_airport_iata",
+    right_on="iata_code",
+    suffix="_arrival"
+)
+```
+
+# Flights Dashboard
+
+## {.sidebar}
+```{python}
+# UI LIST OF NORWEGIAN AIRPORTS FOR SELECT INPUT
+airports_list = (df_airport_monthly_traffic.filter(pl.col("iso_country")=="NO")).select("name", "iata_code").unique().sort("name")
+ui.input_select("airport", "Airport:",
+                choices=dict(zip(airports_list["iata_code"].to_list(), airports_list["name"].to_list())),
+                selected="MQN")
+
+```
+```{python}
+@reactive.calc
+def airport():
+    airport_code = input.airport()
+    return airport_code
+
+```
+
+```{python}
+# ADD SEAT OCCUPANCY TO SSB DATA (PASSENGERS/SEATS) AND FLIGHT TYPE (INTERNATIONAL/DOMESTIC + ARRIVAL/DEPARTURE)
 df_ssb = (
     df_airport_monthly_traffic
     .filter(
         (pl.col("seats").is_not_null()) &
         (pl.col("passengers").is_not_null()) &
-        (pl.col("seats") > 10) &
-        (pl.col("passengers") > 10)
+        (pl.col("seats") > 0) &
+        (pl.col("passengers") > 0)
     )
     .with_columns(
         (pl.col("passengers") / pl.col("seats") ).alias("seat_occupancy")
     )
+    .with_columns(
+        ( pl.col("international_domestic") + pl.col("arrival_departure")).alias("flight_type")
+    )
 )
+# READ AIRCRAFT SEATS BY TYPE 
+query = "select * from aircraft_types_seats"
+df_aircraft_seats_by_type = pl.read_database(query, conn)
+df_aircraft_seats_by_type = df_aircraft_seats_by_type.select(pl.col("type"), pl.col("seats_max"))
+
+# JOIN SEATS TO AVINOR DATA TO FILL OUT EMPTY SEATS VALUES IN AVINOR DATASET 
+# SEATS IN AVINOR WAS CALCULATED FROM CONFIGURATION OF AIRCRAFT
+# SOME AIRLINES HAS OWN TYPES OF CONFIGURATION THAT MAKES IMPOSSIBLE TO FIND SEATS
+
+df_avinor = df_avinor.join(
+    df_aircraft_seats_by_type,
+    left_on="aircraft_type",
+    right_on="type",
+    how="left"
+)
+# COALESCE SEATS AND SEATS_RIGHT TO TOTAL_SEATS COLUMN
+df_avinor = df_avinor.with_columns(
+   pl.coalesce(pl.col("seats"), pl.col("seats_max")).alias("total_seats")
+)
+
 ```
-# Flights Dashboard
 
-## {.sidebar}
+
 ```{python}
-from shiny.express import render, ui
-airports_list =  df_avinor_flights["departure_airport_iata"].unique().sort().to_list()
-ui.input_select("airport", "Airport:",
-                choices=airports_list)
-ui.input_date_range(
-    "date_range",
-    label="Date range input",
-    start=df_avinor_flights.select(pl.col("date_time_of_departure")).min().cast(str).row(0)[0],
-    end=df_avinor_flights.select(pl.col("date_time_of_departure")).max().cast(str).row(0)[0],
-    format="yyyy/mm/dd",
-)
-ui.input_checkbox_group("arrival_or_departure", label = "Choose airport's type", choices = ["Arrival", "Departure"])
-ui.input_checkbox_group(
-    "i_or_d",
-    label ="Choose type of flight",
-    choices= ["International", "Domestic"],
-    selected="International",
-)
+# FILTER DATA FROM 2023 TO 2026
+# FIND SUM OF PASSENGERS BY MONTH FOR FROM SSB DATA
+# THIS IS USED IN SARIMA FORECAST MODELS 
+@reactive.calc
+def filtered_ssb_data():
+    last3_years = END_DATE_SSB - relativedelta(years=3)
+    df_Ssb = (
+    df_ssb
+        .filter(
+            # Filter for TOS (ENTC) and valid data from 2020 to 2026
+            (pl.col("date").cast(pl.Date).is_between(
+               last3_years,
+               END_DATE_SSB
+            )) &
+            (pl.col("passengers") > 10) &
+            (pl.col("iata_code") == airport())
+        )
+        .sort("date")
+        .group_by_dynamic( index_column="date", every="1mo", closed="left")
+        .agg(pl.col("passengers").sum(), pl.col("seats").sum(), pl.col("flights").sum())
+
+    )
+    return df_Ssb
+
+# FILTER DATA FROM 2020 TO 2026 AND CONVERT TO PANDAS FOR PLOTLY
+@reactive.calc
+def filtered_ssb_data_pd( ):
+    df_Ssb = (
+    df_ssb
+        .filter(
+            # Filter for TOS (ENTC) and valid data from 2020 to 2026
+            (pl.col("date").cast(pl.Date).is_between(
+               START_DATE_SSB,
+               END_DATE_SSB
+            )) &
+            (pl.col("passengers") > 10) &
+            (pl.col("iata_code") == airport())
+        )
+        .sort("date")
+        .group_by("date")
+        .agg(pl.col("passengers").sum())
+    )
+    df_pd = df_Ssb.to_pandas()
+    return df_pd
+
+```
+```{python}
+# FILTER SSB DATA FROM 2025.01.06 TO 2025.06.01 
+# FIX YEAR TO ENABLE JOIN WITH AVINOR DATA (ADD 1 YEAR TO DATE)
+# USED FOR FORECAST BASED ON SEATS OCCUPANCY 
+@reactive.calc
+def occupancy_by_type_2025():
+    df_occupancy_by_type_2025 = (
+        df_ssb
+        .filter(
+            (pl.col("date").cast(pl.Date).is_between(
+                LAST_YEAR_SSB,
+                END_DATE_SSB)) &
+            (pl.col("iata_code") == airport()) 
+        )
+        .with_columns(
+            # ADD 1 YEAR TO DATE TO MATCH WITH AVINOR DATA 
+            pl.date( pl.col("date").dt.year() + 1 , pl.col("date").dt.month(), 1)
+        )
+        .rename({"date": "date_pred"})
+        .select("date_pred", "flight_type", "seat_occupancy")
+    )
+    return df_occupancy_by_type_2025
+
+```
+```{python}
+# FILTER AVINOR DATA FOR SELECTED AIRPORT AND DATES (FROM 2026.03.01 TO 2026.08.31)
+@reactive.calc
+def avinor_data():
+    start_date = END_DATE_SSB + relativedelta(months=1)
+    df_Avinor = (
+        df_avinor
+        .filter(
+            (pl.col("date_time_of_departure").cast(pl.Date).is_between(
+                start_date,
+                END_DATE_AVINOR
+            )) &
+            (pl.col("date_time_of_arrival").cast(pl.Date).is_between(
+                start_date,
+                END_DATE_AVINOR
+            )) &
+            (
+                (pl.col("departure_airport_iata") == airport()) |
+                (pl.col("arrival_airport_iata") == airport())
+            )
+        ))
+    # Add flight_type column: DD, ID, DA, IA
+    df_Avinor = df_Avinor.with_columns(
+        pl.when((pl.col("departure_airport_iata") == airport()) & (pl.col("iso_country_arrival") == "NO"))
+        .then(pl.lit("DD"))
+        .when((pl.col("departure_airport_iata") == airport()) & (pl.col("iso_country_arrival") != "NO"))
+        .then(pl.lit("ID"))
+        .when((pl.col("arrival_airport_iata") == airport()) & (pl.col("iso_country") == "NO"))
+        .then(pl.lit("DA"))
+        .when((pl.col("arrival_airport_iata") == airport()) & (pl.col("iso_country") != "NO"))
+        .then(pl.lit("IA"))
+        .otherwise(pl.lit(None))
+        .alias("flight_type")
+    )
+    # BRING TO A SAME DATE FORMAT (YEAR-MONTH-01) 
+    # AND GROUP BY MONTH AND FLIGHT TYPE TO GET TOTAL SEATS BY MONTH AND FLIGHT TYPE
+    df_Avinor = (df_Avinor.with_columns(
+            pl.when(pl.col("departure_airport_iata") == airport())
+            .then(pl.col("date_time_of_departure").cast(pl.Date))
+            .otherwise(pl.col("date_time_of_arrival").cast(pl.Date))
+            .alias("date")
+        )
+        .with_columns(
+            pl.date(pl.col("date").dt.year(), pl.col("date").dt.month(), 1).alias("date_pred")
+        )
+        .group_by("date_pred", "flight_type")
+        .agg(pl.col("total_seats").sum(), pl.count().alias("flights_count"))
+        .sort("date_pred")
+        .select("date_pred", "flights_count", "flight_type", "total_seats"))
+    return df_Avinor
+
+
+# JOIN AVINOR DATA WITH OCCUPANCY BY TYPE TO CALCULATE PREDICTED PASSENGERS (TOTAL_SEATS * SEAT_OCCUPANCY)
+def avinor_data_pred():
+    df_Avinor_pred = (
+        avinor_data()
+        .join(occupancy_by_type_2025(), on=["date_pred", "flight_type"], how="left")
+        .with_columns(
+            (pl.col("total_seats") * pl.col("seat_occupancy")).alias("pred_passengers")
+        )
+        .select("date_pred", "flight_type", "total_seats", "seat_occupancy", "pred_passengers")
+    )
+    # Sum pred_passengers by month (combine all flight types)
+    df_Avinor_pd = df_Avinor_pred.to_pandas()
+    df_Avinor_monthly = df_Avinor_pd.groupby('date_pred').agg({'pred_passengers': 'sum'}).reset_index()
+    df_Avinor_monthly = df_Avinor_monthly[df_Avinor_monthly['pred_passengers'] > 0]
+
+    return df_Avinor_monthly
+
 
 ```
 
-## Column 
 ```{python}
+# SARIMA MODEL WITH EXOGENOUS VARIABLES (SEATS AND FLIGHTS)
+@reactive.calc
+def sarima_model():
+    # TAKE SSB DATA FOR 2023 -2026
+    df = filtered_ssb_data()  
+    # PREPARE DATA FOR SARIMA MODEL (SET DATE AS INDEX AND FREQUENCY TO MONTHLY)   
+    passengers_data = df.select(["date","passengers"]).to_pandas().set_index("date")
+    passengers_data = passengers_data.asfreq("MS")    
 
-@render.table
-def display_flights():
-    start, end = input.date_range()
-    selected_flight_type = list( input.i_or_d())
-    seleted_airport_type = list(input.arrival_or_departure())
-    df_filtred = df_flights
-    if "Arrival" in seleted_airport_type and "Departure" not in seleted_airport_type:
-        df_filtred = df_filtred.filter(pl.col("arrival_airport_iata") == input.airport())
-    elif "Departure" in seleted_airport_type and "Arrival" not in seleted_airport_type:
-        df_filtred = df_filtred.filter(pl.col("departure_airport_iata") == input.airport())
+    # EXOGENOUS VARIABLES FOR SARIMA MODEL (SEATS ) AND FREQUENCY TO MONTHLY
+    exog_data = df.select(["date", "seats"]).to_pandas().set_index("date")
+    exog_data = exog_data.sort_index().asfreq("MS")
 
-    if "Domestic" in selected_flight_type and "International" not in selected_flight_type:
-        df_filtred = df_filtred.filter(pl.col("iso_country")==pl.col("iso_country_arrival"))
+    # result = adfuller(passengers_data)
+    # if result[1] > 0.05:
+    #     d_param = 1
+    # else:
+    #     d_param = 0
+    # FILL MISSING VALUES AFTER .ASFREQ(MS) WITH INTERPOLATION (IF ANY)
+    passengers_data = passengers_data.interpolate()
+    exog_data = exog_data.interpolate()
 
-    elif "International" in selected_flight_type and "Domestic"not in selected_flight_type:
-        df_filtred = df_filtred.filter(pl.col("iso_country")!=pl.col("iso_country_arrival"))
+    # USE AUTO_NODEL TO FIND BEST SARIMA PARAMETERS
+    auto_model = auto_arima(
+        passengers_data,
+        exogenous=exog_data,
+        seasonal=True,
+        m=12,
+        d=None,  
+        D=None,
+        max_p=3,
+        max_q=3,
+        max_P=2,
+        max_Q=2,
+        trace=True,
+        stepwise=True,
+        error_action="ignore",
+        suppress_warnings=True
+    )
 
-    df_filtred = df_filtred.filter((pl.col("departure_airport_iata") == input.airport()) | (pl.col("arrival_airport_iata") == input.airport()),
-     pl.col("date_time_of_departure").is_between(start,end)
-     ).head(10).to_pandas()
+    best_order = auto_model.order
+    best_seasonal = auto_model.seasonal_order
+
+    # USE FOUND PARAMETERS IN SARIMAX
+    model = SARIMAX(
+        passengers_data,
+        exog=exog_data,
+        order=best_order,
+        seasonal_order=best_seasonal,
+
+    )
+    return model.fit(disp=False)
     
-    return df_filtred
 ```
-# Airport Monthly Traffic
-## {.sidebar}
+
 ```{python}
-ui.input_select("airport_traffic", "Airport:",
-                choices=df_airport_monthly_traffic["iata_code"].unique().sort().to_list())
-ui.input_date_range(
-    "date_range_monthly",
-    label="Date range input",
-    start=df_airport_monthly_traffic.select(pl.col("date")).min().cast(str).row(0)[0],
-    end=df_airport_monthly_traffic.select(pl.col("date")).max().cast(str).row(0)[0],
-    format="yyyy/mm",
+# MAKE SARIMA FORECAST AND PREPARE DATA FOR PLOTLY
+import traceback
+@reactive.calc
+def sarima_forecast_data():
+    try:
+        model_result = sarima_model()
+        # TAKE EXOGENOUS VARIABLES FOR FORECAST PERIOD FROM AVINOR DATASET (SEATS AND FLIGHTS BY MONTH)
+        future_values = (avinor_data().group_by("date_pred")
+        .agg(pl.col("total_seats").sum().alias("seats"), pl.col("flights_count").sum().alias("flights")).rename({
+            "date_pred": "date"
+        }))
+        # PREPARE EXOGENOUS VARIABLES FOR FORECAST (SET DATE AS INDEX AND FREQUENCY TO MONTHLY)
+        exog_future = future_values.select(["date", "seats"]).to_pandas().set_index("date")
+        exog_future = exog_future.sort_index().asfreq("MS")
+
+        if model_result is None:
+            raise ValueError("Model is None")
+
+        # FIND STEPS
+        diff = relativedelta(END_DATE_AVINOR, END_DATE_SSB)
+        Steps = diff.years * 12 + diff.months
+        print("Steps:", Steps)
+
+        # MAKE FORECAST
+        forecast = model_result.get_forecast(steps=Steps, exog=exog_future)
+        forecast_df = forecast.summary_frame()
+
+        # CREATE DATES FOR FORECAST PERIOD
+        start_date = END_DATE_SSB + relativedelta(months=1)
+        forecast_dates = pd.date_range(
+            start= start_date,
+            periods=Steps,
+            freq="MS"
+        )
+
+        forecast_df = forecast_df.copy()
+        forecast_df["date"] = forecast_dates
+        return forecast_df
+
+    except Exception as e:
+        import traceback
+        print(traceback.format_exc()) 
+        print(traceback.format_exc())
+        raise
+```
+
+
+
+## Column {width=100%}
+### Row {height=15%}
+```{python}
+# FILTER + TIME + AIRPORT
+# USED IN CARD AND PLOTS WITH DOMESTIC/INTERNATIONAL AND ARRIVAL/DEPARTURE 
+@reactive.calc
+def ssb_for_last_year():
+    df_ssb_given_date_airport = (
+        df_ssb
+        .filter(
+            (pl.col("date").cast(pl.Date).is_between(
+                LAST_YEAR_SSB,
+                END_DATE_SSB
+            )) &
+            (pl.col("iata_code") == airport())
+        )
+        .with_columns([
+            pl.col("date").dt.year().alias("year"),
+            pl.col("date").dt.month().alias("month"),
+        ])
+    )
+    return df_ssb_given_date_airport
+    
+```
+
+::: {.columns style="gap:0px;"}
+#### Column{width=20%}
+```{python}
+from IPython.display import Image, display
+display(Image("departure.png"))
+```
+#### Column{width=80%}
+```{python}
+ui.markdown(f"**Domestic Departure for {LAST_YEAR_SSB.year}**")
+@render.data_frame
+def dd():
+    return make_widget("DD")
+```
+:::
+```{python}
+
+```
+
+
+::: {.columns style="gap:0px;"}
+#### Column{width=20%}
+```{python}
+display(Image("arrival.png"))
+```
+#### Column{width=80%}
+```{python}
+ui.markdown(f"**Domestic Arrival for {LAST_YEAR_SSB.year}**")
+@render.data_frame
+def da():
+    return make_widget("DA")
+```
+:::
+
+
+
+::: {.columns style="gap:0px;"}
+#### Column{width=20%}
+```{python}
+display(Image("departure.png"))
+```
+#### Column{width=80%}
+```{python}
+ui.markdown(f"**International Departure for {LAST_YEAR_SSB.year}**")
+@render.data_frame
+def id():
+    return make_widget("ID")
+```
+:::
+
+
+
+
+::: {.columns style="gap:0px;"}
+#### Column{width=20%}
+```{python}
+display(Image("arrival.png"))
+```
+#### Column{width=80%}
+```{python}
+ui.markdown(f"**International Arrival for {LAST_YEAR_SSB.year}**")
+@render.data_frame
+def ia():
+    return make_widget("IA")
+```
+:::
+
+
+```{python}
+def make_widget(flight_type):
+
+    df_DD = ssb_for_last_year().filter(
+        pl.col("flight_type") == flight_type
+    )
+
+    return pl.DataFrame({
+        "Passengers": [df_DD["passengers"].sum()],
+        "Flights":    [df_DD["flights"].sum()],
+        "Seats":      [df_DD["seats"].sum()]
+    })
+```
+### Row{height=85%}
+#### Column {width=50%}
+##### Row {height=50%}
+```{python}
+# POLT WITH FORECAST AND HISTORICAL DATA
+@render_plotly
+def my_plot():
+
+
+    fig = go.Figure()
+    
+    # historical
+    ssb = filtered_ssb_data_pd()
+    fig.add_trace(go.Scatter(
+        x=ssb["date"],
+        y=ssb["passengers"],
+        mode='lines',
+        name='Historical passengers (SSB)',
+        line=dict(color='#1f77b4', width=2),
+        showlegend=False
+    ))
+    
+    # forecast
+    avinor = avinor_data_pred()
+    fig.add_trace(go.Scatter(
+        x=avinor["date_pred"],
+        y=avinor["pred_passengers"],
+        mode='lines',
+        name='Forecast passengers',
+        line=dict(color='#ff7f0e', width=2),
+        showlegend=False
+    ))
+    
+    # SARIMA forecast (green dashed line)
+    sarima_df = sarima_forecast_data()
+    if not sarima_df.empty:
+        fig.add_trace(go.Scatter(
+            x=sarima_df["date"],
+            y=sarima_df["mean"],
+            mode='lines',
+            name='SARIMA forecast',
+            line=dict(color='#2ca02c', width=2),
+            showlegend=False
+        ))
+
+    # CONNECTION LINES
+
+    last_ssb = ssb.iloc[-1]
+    first_avinor = avinor.iloc[0]
+    if not sarima_df.empty:
+        first_sarima = sarima_df.iloc[0]   
+        fig.add_trace(go.Scatter(
+            x=[last_ssb["date"], first_sarima["date"]],
+            y=[last_ssb["passengers"], first_sarima["mean"]],
+            mode="lines",
+            line=dict(
+                color="#2ca02c",
+                width=2,
+                dash="dash"   
+            ),
+            showlegend=False
+        ))
+    fig.add_trace(go.Scatter(
+        x=[last_ssb["date"], first_avinor["date_pred"]],
+        y=[last_ssb["passengers"], first_avinor["pred_passengers"]],
+        mode="lines",
+        line=dict(
+            color='#ff7f0e',
+            width=2,
+            dash="dash"   
+        ),
+        showlegend=False
+    ))
+    # Add vertical line for today (2026-01-01)
+    fig.add_vline(
+        x=END_DATE_SSB,
+        line_dash='dash',
+        line_color='red',
+        line_width=2
+    )
+    
+    # Add annotation for the line
+    fig.add_annotation(
+        x="2026-01-01",
+        text=f"Today {END_DATE_SSB}",
+        showarrow=False,
+        xanchor="right",
+        yanchor="top"
+    )
+    
+    # Legend 1: Historical data (top-left)
+    fig.add_annotation(
+        x=0.02,
+        y=0.98,
+        xref="paper",
+        yref="paper",
+        text="<b>Historical Data</b><br><span style='color:#1f77b4'>━ Historical passengers (SSB)</span>",
+        showarrow=False,
+        xanchor="left",
+        yanchor="top",
+        bgcolor='rgba(255, 255, 255, 0.8)',
+        bordercolor='gray',
+        borderwidth=1,
+        borderpad=10,
+        font=dict(size=10)
+    )
+    
+    # Legend 2: Forecast data (top-right)
+    fig.add_annotation(
+        x=0.98,
+        y=0.98,
+        xref="paper",
+        yref="paper",
+        text="<b>Forecast</b><br><span style='color:#ff7f0e'>━ Forecast passengers</span><br><span style='color:#2ca02c'>╌ SARIMA forecast</span>",
+        showarrow=False,
+        xanchor="right",
+        yanchor="top",
+        bgcolor='rgba(255, 255, 255, 0.8)',
+        bordercolor='gray',
+        borderwidth=1,
+        borderpad=10,
+        font=dict(size=10)
+    )
+    
+    fig.update_layout(
+        autosize=True,
+        title='Passengers: Historical vs Forecast',
+        xaxis_title='Date',
+        yaxis_title='Passengers',
+        hovermode='x unified',
+        template="plotly_white",
+        height=500,
+        xaxis=dict(
+            range=['2020-01-01', '2027-12-31']
+        )
+    )
+    
+    return fig
+```
+
+
+##### Row {height=50%}
+###### Column {width=50%"}
+
+```{python}
+# PLOT WITH ANNUAL GRAPH LINE OF FLIGHTS FOR (2023, 2024, 2025) 
+# TO SEE SEASONALITY AND COMPARE YEARS
+@render_plotly
+def render_flights_years():
+    year_2023 = (END_DATE_SSB-relativedelta(years=3)).replace(month=1, day=1)
+    year_2025 = (END_DATE_SSB -relativedelta(years=1)).replace(month=12, day=31)
+    df_plot = (
+    df_ssb.filter((pl.col("date").cast(pl.Date).is_between(
+                year_2023,
+                year_2025
+            )) & 
+            (pl.col("iata_code") == airport()))
+    .with_columns([
+        pl.col("date").dt.year().alias("year"),
+        pl.col("date").dt.month().alias("month"),
+    ])
+    .group_by(["year", "month"])
+    .agg(
+        pl.col("flights").sum().alias("flights_total")
+    )
+    .sort(["year", "month"])
+    )
+    month_map = {i: calendar.month_abbr[i].lower() for i in range(1, 13)}
+    df_plot = df_plot.with_columns(
+        pl.col("month").replace_strict(month_map).alias("month_name")
+    )
+
+    df_pd = df_plot.to_pandas()
+
+    fig = px.line(
+        df_pd,
+        x="month_name",
+        y="flights_total",
+        color="year",  
+        markers=True,
+        category_orders={
+            "month_name": ["jan","feb","mar","apr","may","jun",
+                        "jul","aug","sep","oct","nov","dec"],
+            "year": [2023, 2024, 2025]
+        },
+        title="Total monthly flights by year"
+    )
+
+    fig.update_layout(
+        autosize=True,
+        xaxis_title="Month",
+        yaxis_title="Flights",
+        legend_title="Year",
+        paper_bgcolor="white",
+        template="plotly_white"
+    )
+
+    return fig
+```
+
+
+###### Column {width=50%"}
+```{python}
+@render_plotly
+def plot_domestic_internatinal():
+
+
+
+    # AGGREGATION
+
+    df_plot = (
+        ssb_for_last_year()
+        .group_by(["year", "month", "international_domestic"])
+        .agg(
+            pl.col("flights").sum().alias("flights_total")
+        )
+        .sort(["year", "month"])
+    )
+
+
+    #  MONTH LABELS
+
+    month_map = {i: calendar.month_abbr[i].lower() for i in range(1, 13)}
+
+    df_plot = df_plot.with_columns(
+        pl.col("month").replace_strict(month_map).alias("month_name")
+    )
+
+
+
+    df_pd = df_plot.to_pandas()
+
+    #  PLOTLY
+
+    fig = px.area(
+        df_pd,
+        x="month_name",
+        y="flights_total",
+        color="international_domestic",
+        facet_col="year",
+        markers=True,
+        category_orders={
+            "month_name": [
+                "jan","feb","mar","apr","may","jun",
+                "jul","aug","sep","oct","nov","dec"
+            ]
+        },
+        title="Domestic vs International Flights by Month and Year"
+    )
+
+    fig.update_layout(
+        autosize=True,
+        xaxis_title="Month",
+        yaxis_title="Flights",
+        legend_title="Type",
+        paper_bgcolor="white",
+        template="plotly_white"
+    )
+
+    return fig
+
+```
+#### Column {width=50%}
+##### Row {height=50%}
+###### Column{width=50%"}
+
+::: {.rows style="gap:0px;"}
+####### Row {height=25%, gap=0px}
+```{python}
+ui.input_slider(
+    "slider",
+    label=f"Select a month for {START_DATE_AVINOR.year}:",
+    min=START_DATE_AVINOR.month,
+    max=END_DATE_AVINOR.month,
+    value=START_DATE_AVINOR.month,
+    step=1,
+    width="100%"
 )
+```
+####### Row {height=75%, gap=0px}
+```{python}
+
+@render_plotly
+def plot_weekly_traffic():
+    df_weekly = (
+    df_avinor
+    .filter(
+        ((pl.col("departure_airport_iata") == airport()) |
+        (pl.col("arrival_airport_iata") == airport())) &
+        (pl.col("date_time_of_departure").dt.date().is_between(
+            pl.date(START_DATE_AVINOR.year, input.slider(), 1),
+           pl.date(START_DATE_AVINOR.year, input.slider(), calendar.monthrange(START_DATE_AVINOR.year, input.slider())[1])
+        ))
+    )
+    .with_columns(
+        pl.col("date_time_of_departure").dt.date().alias("date")
+    )
+    .group_by("date")
+    .agg(
+        pl.count().alias("daily_flights")
+    )
+    .with_columns(
+        pl.col("date").dt.strftime("%A").alias("weekday_name"),
+        pl.col("date").dt.weekday().alias("weekday")
+    )
+    .group_by(["weekday_name", "weekday"])
+    .agg(
+        pl.col("daily_flights").mean().round(0).alias("avg_flights")
+    )
+    .sort("weekday"))
+
+    # df_weekly.write_csv("weekly.txt")
+    
+   
+    pdf = df_weekly.to_pandas()
+
+
+    fig = px.bar(
+        pdf,
+        x="weekday_name",
+        y="avg_flights",
+        title=f"Average Flights per Weekday for {date(START_DATE_AVINOR.year, input.slider(), 1).strftime('%B %Y')}",
+        labels={
+            "weekday_name": "Day of Week",
+            "avg_flights": "Average Flights"
+        }
+    )
+    fig.update_layout(
+        xaxis_title="Week day",
+        yaxis_title="Flights",
+        legend_title="Type",
+        paper_bgcolor="white",
+        autosize=True,
+        template="plotly_white"
+    )
+
+    return fig
+
+
+```
+:::
+###### Column{width=50%"}
+```{python}
+@render_plotly
+def plot_hourly_traffic():
+    df_hourly = (
+        df_avinor
+        .filter(
+           ( (pl.col("departure_airport_iata") == airport()) |
+            (pl.col("arrival_airport_iata") == airport()) ) &
+            (pl.col("date_time_of_departure").dt.date().is_between(
+                pl.date(START_DATE_AVINOR.year, input.slider(), 1),
+                pl.date(START_DATE_AVINOR.year, input.slider(), calendar.monthrange(START_DATE_AVINOR.year, input.slider())[1])
+            ))
+        )
+        .with_columns([
+            pl.col("date_time_of_departure").dt.date().alias("date"),
+            pl.col("date_time_of_departure").dt.hour().alias("hour")
+        ])
+        
+        .group_by(["date", "hour"])
+        .agg(
+            pl.count().alias("hourly_flights")
+        )
+        
+        .group_by("hour")
+        .agg(
+            pl.col("hourly_flights").mean().alias("avg_flights")
+        )
+        .sort("hour")
+    )
+
+    pdf = df_hourly.to_pandas()
+
+    fig = px.bar(
+        pdf,
+        x="hour",
+        y="avg_flights",
+        title=f"Average Flights per Hour of Day for {date(START_DATE_AVINOR.year, input.slider(), 1).strftime('%B %Y')}",
+        labels={
+            "hour": "Hour of Day",
+            "avg_flights": "Average Flights"
+        }
+    )
+    fig.update_layout(
+        autosize=True,
+        xaxis_title="Hour of Day",
+        yaxis_title="Flights",
+        legend_title="Type",
+        template="plotly_white",
+        paper_bgcolor="white"
+    )
+    fig.update_xaxes(
+        dtick=1
+    )
+    return fig
+
+```
+##### Row{height=50%}
+###### Column {width=50%}
+
+```{python}
+@render_plotly
+def plot_arival_departure_growth():
+
+
+    df = (
+        ssb_for_last_year()
+        .with_columns([
+            pl.col("date").dt.year().alias("year"),
+            pl.col("date").dt.month().alias("month"),
+        ])
+        .group_by(["year", "month", "arrival_departure"])
+        .agg(
+            pl.col("passengers").sum().alias("passengers_total")
+        )
+        .pivot(
+            values="passengers_total",
+            index=["year", "month"],
+            columns="arrival_departure"
+        )
+        .fill_null(0)
+        .with_columns(
+            (pl.col("A") - pl.col("D")).alias("diff")
+        )
+        .sort(["year", "month"])
+    )
+
+
+    month_map = {i: calendar.month_abbr[i].lower() for i in range(1, 13)}
+
+    df = df.with_columns(
+        pl.col("month").replace_strict(month_map).alias("month_name")
+    )
+
+    df_pd = df.to_pandas()
+
+    fig = px.line(
+        df_pd,
+        x="month_name",
+        y="diff",
+        color="year",
+        markers=True,
+        category_orders={
+            "month_name": [
+                "jan","feb","mar","apr","may","jun",
+                "jul","aug","sep","oct","nov","dec"
+            ]
+        },
+        title="Arrival - Departure Passenger Difference"
+    )
+    fig.add_hline(
+    y=0,
+    line_dash="dash",
+    line_color="red",
+    line_width=2
+    )
+    fig.update_layout(
+        autosize=True,
+        xaxis_title="Month",
+        yaxis_title="Passengers (Arrival - Departure)",
+        template="plotly_white"
+    )
+
+    return fig
+```
+###### Column {width=50%}
+```{python}
+@render_widget
+def plot_flights_ipyleaflet():
+
+    routes = (
+    df_avinor_kepler
+    .filter(pl.col("dep_iata") == airport())
+    .filter(
+        pl.col("dep_date").is_between(LAST_MONTH_AVINOR, END_DATE_AVINOR)
+    )
+    .group_by("arr_iata")
+    .agg(
+        pl.len().alias("flight_count"),
+        pl.first("arr_lat"),
+        pl.first("arr_lon")
+    )
+    )
+    dep = (
+    df_avinor_kepler
+    .filter(pl.col("dep_iata") == airport())
+    .select(["dep_lat", "dep_lon"])
+    .drop_nulls()
+    .head(1)
+    .to_pandas()
+    )
+    dep_lat, dep_lon = dep.iloc[0]
+
+    m = Map(center=(dep_lat, dep_lon), zoom=4)
+
+    # m.add(Marker(location=( df["latitude_deg"][0], df["longitude_deg"][0] )))
+    df = routes.to_pandas()
+    df["flight_class"] = pd.qcut(
+        df["flight_count"],
+        q=5,
+        labels=False,
+        duplicates="drop"
+    )
+
+    df["flight_class"] = df["flight_class"].fillna(0).astype(int)
+
+    opacity_map = {
+        0: 0.3,
+        1: 0.45,
+        2: 0.55,
+        3: 0.7,
+        4: 1.0
+    }
+
+    weight_map = {
+        0: 1,
+        1: 1,
+        2: 2,
+        3: 2,
+        4: 2
+    }
+
+    for _, row in df.iterrows():
+
+        if pd.isna(row["arr_lat"]) or pd.isna(row["arr_lon"]):
+            continue
+
+        line = Polyline(
+            locations=[
+                (dep_lat, dep_lon),
+                (row["arr_lat"], row["arr_lon"])
+            ],
+            color="blue",
+            weight=weight_map[row["flight_class"]],
+            opacity=opacity_map[row["flight_class"]],
+            lineCap='round'
+        )
+
+        m.add(line)
+
+    m.add(CircleMarker(
+        location=(dep_lat, dep_lon),
+        radius=6,
+        color="red"
+    ))
+
+    return m
 ``` 
 
-## Column
-```{python}
-@render.table
-def display_monthly_traffic():
-    start, end = input.date_range_monthly()
-    df_filtred = df_airport_monthly_traffic.filter(
-        (pl.col("iata_code") == input.airport_traffic()) &
-        pl.col("date").is_between(start,end)
-    ).to_pandas()
-    return df_filtred
 
-```
+
+
+
 # Map
 ```{python}
-# from keplergl import KeplerGl
-# @render.ui
-# def display_map():
-#     map_1 = KeplerGl(height=600)
-#     map_1.add_data(data=df_avinor, name="flights")
+from keplergl import KeplerGl
+@render_widget
+def display_map():
+    
+    map_1 = KeplerGl(
+        height="100%",
+        data={"Intra flights": df_avinor_kepler.to_pandas().dropna()},
+        config=map_config
+    )
+    # map_1.add_data(data=df_avinor.to_pandas().dropna(), name="flights")
 
-#     map_1
-```
-# Pivot
-```{python}
-
-@render.ui
-def display_people():
-    html_code =pyg.to_html(df_avinor_flights)
-    return ui.HTML(html_code)
+    return map_1
 ```
 
-# Pivot 
+# Pivot SSB
+## Row {height=100%}
 ```{python}
 @render.ui
 
 def display_ssb_traffic():
 
-    html_code =pyg.to_html(df_ssb)
-    return ui.HTML(html_code)
+    html_code =pyg.to_html(df_ssb,  appearance="light")
+    return ui.div(
+        ui.HTML(html_code),
+        style="height: 100%; margin: 0; padding: 0;"
+    )
 ``` 
 
-# Pivot 
+# Pivot AVINOR
+## Row {height=100%}
 ```{python}
 
 @render.ui
 
 def display_avinor():
 
-    html_code =pyg.to_html(df_avinor)
-    return ui.HTML(html_code)
+    html_code =pyg.to_html(df_avinor,  appearance="light")
+    return ui.div(
+        ui.HTML(html_code),
+        style="height: 100%; margin: 0; padding: 0;"
+    )
 ``` 
