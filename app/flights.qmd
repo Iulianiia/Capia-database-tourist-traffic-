@@ -57,10 +57,14 @@ query = """SELECT
         WHERE iata_code IS NOT NULL"""
 df_airports_all = pl.read_database(query, conn)
 df_airports = df_airports_all.select(pl.col("name"), pl.col("latitude_deg"), pl.col("longitude_deg"), pl.col("iata_code"))
-# tromso_airport = df_airports_all.filter(pl.col("iata_code") == "TOS").select(pl.col("name").first())
-# print(tromso_airport)
-# AIRPORT'S CODES
-# query = " select icao_code, iata_code, iso_country from airports where icao_code is not null"
+# AIRPORTS DATAFRAME CONTAINS THE FOLLOWING COLUMNS:
+# - AIRPORT NAME
+# - LATITUDE IN DEGREES
+# - LONGITUDE IN DEGREES
+# - IATA CODE
+#
+# THIS DATAFRAME IS USED TO CREATE AVINOR_KEPLER FOR VISUALIZATION
+# IN KEPLERGL AND LEAFLET MAPS
 df_airports_code = df_airports_all.select(pl.col("icao_code"), pl.col("iata_code"), pl.col("iso_country"), pl.col("name"))
 ```
 ```{python}
@@ -76,6 +80,21 @@ df_airport_monthly_traffic =(df_airport_monthly_traffic.filter(
     left_on="airport_icao_code", 
     right_on="icao_code"
 ))
+# df_airport_monthly_traffic IS A DATAFRAME CONTAINING MONTHLY AIRPORT TRAFFIC DATA WITH THE FOLLOWING COLUMNS:
+# - DATE
+# - AIRPORT_ICAO_CODE
+# - ARRIVAL_DEPARTURE
+# - INTERNATIONAL_DOMESTIC
+# - FLIGHTS
+# - PASSENGERS
+# - SEATS
+#
+# ADDITIONAL COLUMNS (MERGED FROM AIRPORT_CODE VIA JOIN USING AIRPORT ICAO CODE):
+# - IATA_CODE
+# - ISO_COUNTRY
+# - NAME
+#
+# THIS JOIN IS USED TO ALIGN AIRPORT IDENTIFIERS WITH AVINOR_DATA VIA COMMON IATA_CODE
 ```
 ```{python}
 # AVINOR FLIGHTS + ISO_COUNTRY + AIRPORTS CODES
@@ -126,6 +145,21 @@ df_avinor_kepler = df_avinor_kepler.rename({
     "departure_airport_iata": "dep_iata",
     "arrival_airport_iata": "arr_iata"
 })
+# DF_AVINOR_KEPLER CONTAINS FLIGHT ROUTE DATA USED FOR VISUALIZATION IN KEPLERGL AND LEAFLET MAPS
+
+# FIELDS:
+# - DEP_DATE: DEPARTURE DATE
+# - DEP_IATA: DEPARTURE AIRPORT IATA CODE
+# - ARR_DATE: ARRIVAL DATE
+# - ARR_IATA: ARRIVAL AIRPORT IATA CODE
+#
+# ENRICHED AIRPORT INFORMATION (JOINED FROM AIRPORTS DATAFRAME):
+# - DEP_LAT: DEPARTURE AIRPORT LATITUDE
+# - DEP_LON: DEPARTURE AIRPORT LONGITUDE
+# - DEP_NAME: DEPARTURE AIRPORT NAME
+# - ARR_LAT: ARRIVAL AIRPORT LATITUDE
+# - ARR_LON: ARRIVAL AIRPORT LONGITUDE
+# - ARR_NAME: ARRIVAL AIRPORT NAME
 ```
 ```{python}
 # WE NEED ICAO CODE AND ISO COUNTRY TO DETERMINE IF FLIGHT IS DOMESTIC OR INTERNATIONAL
@@ -141,6 +175,27 @@ df_avinor = df_avinor_all.join(
     right_on="iata_code",
     suffix="_arrival"
 )
+# FINAL COLUMNS IN DF_AVINOR:
+
+# - date_time (from df_avinor_all; combined date and time of flight)
+# - departure_airport_iata (from df_avinor_all)
+# - arrival_airport_iata (from df_avinor_all)
+# - airline_designator_iata (from df_avinor_all)
+# - seats (from df_avinor_all)
+# - passengers (from df_avinor_all)
+# - flights (from df_avinor_all)
+
+# DEPARTURE AIRPORT FIELDS (from df_airports_code, suffix "_departure"):
+# - icao_code_departure (from airports_code)
+# - iata_code_departure (from airports_code)
+# - iso_country_departure (from airports_code)
+# - name_departure (from airports_code)
+
+# ARRIVAL AIRPORT FIELDS (from df_airports_code, suffix "_arrival"):
+# - icao_code_arrival (from airports_code)
+# - iata_code_arrival (from airports_code)
+# - iso_country_arrival (from airports_code)
+# - name_arrival (from airports_code)
 ```
 
 # Flights Dashboard
@@ -356,7 +411,7 @@ def sarima_model():
     passengers_data = passengers_data.asfreq("MS")    
 
     # EXOGENOUS VARIABLES FOR SARIMA MODEL (SEATS ) AND FREQUENCY TO MONTHLY
-    exog_data = df.select(["date", "seats"]).to_pandas().set_index("date")
+    exog_data = df.select(["date", "flights"]).to_pandas().set_index("date")
     exog_data = exog_data.sort_index().asfreq("MS")
 
     # result = adfuller(passengers_data)
@@ -414,7 +469,7 @@ def sarima_forecast_data():
             "date_pred": "date"
         }))
         # PREPARE EXOGENOUS VARIABLES FOR FORECAST (SET DATE AS INDEX AND FREQUENCY TO MONTHLY)
-        exog_future = future_values.select(["date", "seats"]).to_pandas().set_index("date")
+        exog_future = future_values.select(["date", "flights"]).to_pandas().set_index("date")
         exog_future = exog_future.sort_index().asfreq("MS")
 
         if model_result is None:
@@ -957,9 +1012,11 @@ def plot_hourly_traffic():
 ###### Column {width=50%}
 
 ```{python}
+# THIS PLOT SHOW DIFFERANCE BETBEEN NUMBER OF ARRIVAL AND DEPARTURE
+# ARRIVAL - DEPARTURE
 @render_plotly
 def plot_arival_departure_growth():
-
+     
 
     df = (
         ssb_for_last_year()
@@ -1004,13 +1061,13 @@ def plot_arival_departure_growth():
                 "jul","aug","sep","oct","nov","dec"
             ]
         },
-        title="Arrival - Departure Passenger Difference"
+        title=f"Arrival - Departure Passenger Difference for {LAST_YEAR_SSB.year}"
     )
     fig.add_hline(
-    y=0,
-    line_dash="dash",
-    line_color="red",
-    line_width=2
+        y=0,
+        line_dash="dash",
+        line_color="red",
+        line_width=2
     )
     fig.update_layout(
         autosize=True,
@@ -1023,6 +1080,8 @@ def plot_arival_departure_growth():
 ```
 ###### Column {width=50%}
 ```{python}
+# SHOWS DESTINATION FOR LAST MONTH FROM AVINOR
+# More flights → thicker line
 @render_widget
 def plot_flights_ipyleaflet():
 
