@@ -21,7 +21,6 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
     from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
     from statsmodels.tsa.statespace.sarimax import SARIMAX
     from plotly.subplots import make_subplots
-
     from src.db_connect import ps_connect
 
 
@@ -66,14 +65,18 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
 
     # ========================================================================
 
-    # SSB AIRPORT MONTHLY TRAFFIC + IATA CODE + ISO COUNTRY
-    query = "SELECT * from ssb_airport_monthly_traffic"
+    # SSB AIRPORT MONTHLY TRAFFIC + IATA CODE + ISO COUNTRY 
+    # DROP ROWS WITH NOTOODEN AIRPORT BECAUSE THEY ARE NOT IN AVINOR DATASET
+    # NOTOODEN AIRPORT HAS NOT ANY TRAFFIC FOR NAOW AT ALL
+    query = "SELECT * from ssb_airport_monthly_traffic "
     df_airport_monthly_traffic = pl.read_database(query, conn)
-    df_airport_monthly_traffic =df_airport_monthly_traffic.join(
+    df_airport_monthly_traffic =(df_airport_monthly_traffic.filter(
+        pl.col("airport_icao_code") != "ENNO"
+    ).join(
         df_airports_code,
         left_on="airport_icao_code", 
         right_on="icao_code"
-    )
+    ))
 
     # ========================================================================
 
@@ -150,21 +153,14 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
     airports_list = (df_airport_monthly_traffic.filter(pl.col("iso_country")=="NO")).select("name", "iata_code").unique().sort("name")
     ui.input_select("airport", "Airport:",
                     choices=dict(zip(airports_list["iata_code"].to_list(), airports_list["name"].to_list())),
-                    selected="TOS")
+                    selected="MQN")
 
     # ========================================================================
 
     @reactive.calc
     def airport():
-        airport_name = input.airport()
-        return airport_name
-        # iata_code = (
-        #     df_airport_monthly_traffic
-        #     .filter(pl.col("name") == airport_name)
-        #     .select(pl.col("iata_code").first())
-        #     .item()
-        # )
-        # return iata_code
+        airport_code = input.airport()
+        return airport_code
 
     # ========================================================================
 
@@ -351,13 +347,14 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
     # SARIMA MODEL WITH EXOGENOUS VARIABLES (SEATS AND FLIGHTS)
     @reactive.calc
     def sarima_model():
-    
+        # TAKE SSB DATA FOR 2023 -2026
         df = filtered_ssb_data()  
-
+        # PREPARE DATA FOR SARIMA MODEL (SET DATE AS INDEX AND FREQUENCY TO MONTHLY)   
         passengers_data = df.select(["date","passengers"]).to_pandas().set_index("date")
         passengers_data = passengers_data.asfreq("MS")    
 
-        exog_data = df.select(["date", "seats", "flights"]).to_pandas().set_index("date")
+        # EXOGENOUS VARIABLES FOR SARIMA MODEL (SEATS ) AND FREQUENCY TO MONTHLY
+        exog_data = df.select(["date", "seats"]).to_pandas().set_index("date")
         exog_data = exog_data.sort_index().asfreq("MS")
 
         # result = adfuller(passengers_data)
@@ -365,6 +362,9 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
         #     d_param = 1
         # else:
         #     d_param = 0
+        # FILL MISSING VALUES AFTER .ASFREQ(MS) WITH INTERPOLATION (IF ANY)
+        passengers_data = passengers_data.interpolate()
+        exog_data = exog_data.interpolate()
 
         # USE AUTO_NODEL TO FIND BEST SARIMA PARAMETERS
         auto_model = auto_arima(
@@ -386,6 +386,7 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
 
         best_order = auto_model.order
         best_seasonal = auto_model.seasonal_order
+
         # USE FOUND PARAMETERS IN SARIMAX
         model = SARIMAX(
             passengers_data,
@@ -400,24 +401,27 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
     # ========================================================================
 
     # MAKE SARIMA FORECAST AND PREPARE DATA FOR PLOTLY
+    import traceback
     @reactive.calc
     def sarima_forecast_data():
         try:
             model_result = sarima_model()
-
             # TAKE EXOGENOUS VARIABLES FOR FORECAST PERIOD FROM AVINOR DATASET (SEATS AND FLIGHTS BY MONTH)
             future_values = (avinor_data().group_by("date_pred")
             .agg(pl.col("total_seats").sum().alias("seats"), pl.col("flights_count").sum().alias("flights")).rename({
                 "date_pred": "date"
             }))
-            exog_future = future_values.select(["date", "seats", "flights"]).to_pandas().set_index("date")
-        
+            # PREPARE EXOGENOUS VARIABLES FOR FORECAST (SET DATE AS INDEX AND FREQUENCY TO MONTHLY)
+            exog_future = future_values.select(["date", "seats"]).to_pandas().set_index("date")
+            exog_future = exog_future.sort_index().asfreq("MS")
+
             if model_result is None:
                 raise ValueError("Model is None")
 
             # FIND STEPS
             diff = relativedelta(END_DATE_AVINOR, END_DATE_SSB)
             Steps = diff.years * 12 + diff.months
+            print("Steps:", Steps)
 
             # MAKE FORECAST
             forecast = model_result.get_forecast(steps=Steps, exog=exog_future)
@@ -433,17 +437,13 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
 
             forecast_df = forecast_df.copy()
             forecast_df["date"] = forecast_dates
-
-            # save file (safe path)
-            # with open("sarima_forecast.txt", "w", encoding="utf-8") as f:
-            #     f.write(forecast_df.to_string())
-
             return forecast_df
 
         except Exception as e:
             import traceback
             print(traceback.format_exc()) 
-            return pd.DataFrame()
+            print(traceback.format_exc())
+            raise
 
     # ========================================================================
 
@@ -573,19 +573,20 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
         # CONNECTION LINES
 
         last_ssb = ssb.iloc[-1]
-        first_sarima = sarima_df.iloc[0]   
         first_avinor = avinor.iloc[0]
-        fig.add_trace(go.Scatter(
-            x=[last_ssb["date"], first_sarima["date"]],
-            y=[last_ssb["passengers"], first_sarima["mean"]],
-            mode="lines",
-            line=dict(
-                color="#2ca02c",
-                width=2,
-                dash="dash"   
-            ),
-            showlegend=False
-        ))
+        if not sarima_df.empty:
+            first_sarima = sarima_df.iloc[0]   
+            fig.add_trace(go.Scatter(
+                x=[last_ssb["date"], first_sarima["date"]],
+                y=[last_ssb["passengers"], first_sarima["mean"]],
+                mode="lines",
+                line=dict(
+                    color="#2ca02c",
+                    width=2,
+                    dash="dash"   
+                ),
+                showlegend=False
+            ))
         fig.add_trace(go.Scatter(
             x=[last_ssb["date"], first_avinor["date_pred"]],
             y=[last_ssb["passengers"], first_avinor["pred_passengers"]],
@@ -657,7 +658,7 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
             template="plotly_white",
             height=500,
             xaxis=dict(
-                range=['2020-01-01', '2028-12-31']
+                range=['2020-01-01', '2027-12-31']
             )
         )
     
@@ -665,15 +666,16 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
 
     # ========================================================================
 
-    # PLOT WITH ANNUAL GRAPH LINE OF PASSENGERS
+    # PLOT WITH ANNUAL GRAPH LINE OF FLIGHTS FOR (2023, 2024, 2025) 
+    # TO SEE SEASONALITY AND COMPARE YEARS
     @render_plotly
     def render_flights_years():
-        last_3_years = (END_DATE_SSB-relativedelta(years=3)).replace(month=1, day=1)
-        last_year = (END_DATE_SSB -relativedelta(years=1)).replace(month=12, day=31)
+        year_2023 = (END_DATE_SSB-relativedelta(years=3)).replace(month=1, day=1)
+        year_2025 = (END_DATE_SSB -relativedelta(years=1)).replace(month=12, day=31)
         df_plot = (
         df_ssb.filter((pl.col("date").cast(pl.Date).is_between(
-                    last_3_years,
-                    last_year
+                    year_2023,
+                    year_2025
                 )) & 
                 (pl.col("iata_code") == airport()))
         .with_columns([
@@ -702,7 +704,7 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
             category_orders={
                 "month_name": ["jan","feb","mar","apr","may","jun",
                             "jul","aug","sep","oct","nov","dec"],
-                "year": [2024, 2025, 2026]
+                "year": [2023, 2024, 2025]
             },
             title="Total monthly flights by year"
         )
@@ -780,6 +782,133 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
 
     # ========================================================================
 
+    ui.input_slider(
+        "slider",
+        label=f"Select a month for {START_DATE_AVINOR.year}:",
+        min=START_DATE_AVINOR.month,
+        max=END_DATE_AVINOR.month,
+        value=START_DATE_AVINOR.month,
+        step=1,
+        width="100%"
+    )
+
+    # ========================================================================
+
+    @render_plotly
+    def plot_weekly_traffic():
+        df_weekly = (
+        df_avinor
+        .filter(
+            ((pl.col("departure_airport_iata") == airport()) |
+            (pl.col("arrival_airport_iata") == airport())) &
+            (pl.col("date_time_of_departure").dt.date().is_between(
+                pl.date(START_DATE_AVINOR.year, input.slider(), 1),
+               pl.date(START_DATE_AVINOR.year, input.slider(), calendar.monthrange(START_DATE_AVINOR.year, input.slider())[1])
+            ))
+        )
+        .with_columns(
+            pl.col("date_time_of_departure").dt.date().alias("date")
+        )
+        .group_by("date")
+        .agg(
+            pl.count().alias("daily_flights")
+        )
+        .with_columns(
+            pl.col("date").dt.strftime("%A").alias("weekday_name"),
+            pl.col("date").dt.weekday().alias("weekday")
+        )
+        .group_by(["weekday_name", "weekday"])
+        .agg(
+            pl.col("daily_flights").mean().round(0).alias("avg_flights")
+        )
+        .sort("weekday"))
+
+        # df_weekly.write_csv("weekly.txt")
+    
+   
+        pdf = df_weekly.to_pandas()
+
+
+        fig = px.bar(
+            pdf,
+            x="weekday_name",
+            y="avg_flights",
+            title=f"Average Flights per Weekday for {date(START_DATE_AVINOR.year, input.slider(), 1).strftime('%B %Y')}",
+            labels={
+                "weekday_name": "Day of Week",
+                "avg_flights": "Average Flights"
+            }
+        )
+        fig.update_layout(
+            xaxis_title="Week day",
+            yaxis_title="Flights",
+            legend_title="Type",
+            paper_bgcolor="white",
+            autosize=True,
+            template="plotly_white"
+        )
+
+        return fig
+
+
+    # ========================================================================
+
+    @render_plotly
+    def plot_hourly_traffic():
+        df_hourly = (
+            df_avinor
+            .filter(
+               ( (pl.col("departure_airport_iata") == airport()) |
+                (pl.col("arrival_airport_iata") == airport()) ) &
+                (pl.col("date_time_of_departure").dt.date().is_between(
+                    pl.date(START_DATE_AVINOR.year, input.slider(), 1),
+                    pl.date(START_DATE_AVINOR.year, input.slider(), calendar.monthrange(START_DATE_AVINOR.year, input.slider())[1])
+                ))
+            )
+            .with_columns([
+                pl.col("date_time_of_departure").dt.date().alias("date"),
+                pl.col("date_time_of_departure").dt.hour().alias("hour")
+            ])
+        
+            .group_by(["date", "hour"])
+            .agg(
+                pl.count().alias("hourly_flights")
+            )
+        
+            .group_by("hour")
+            .agg(
+                pl.col("hourly_flights").mean().alias("avg_flights")
+            )
+            .sort("hour")
+        )
+
+        pdf = df_hourly.to_pandas()
+
+        fig = px.bar(
+            pdf,
+            x="hour",
+            y="avg_flights",
+            title=f"Average Flights per Hour of Day for {date(START_DATE_AVINOR.year, input.slider(), 1).strftime('%B %Y')}",
+            labels={
+                "hour": "Hour of Day",
+                "avg_flights": "Average Flights"
+            }
+        )
+        fig.update_layout(
+            autosize=True,
+            xaxis_title="Hour of Day",
+            yaxis_title="Flights",
+            legend_title="Type",
+            template="plotly_white",
+            paper_bgcolor="white"
+        )
+        fig.update_xaxes(
+            dtick=1
+        )
+        return fig
+
+    # ========================================================================
+
     @render_plotly
     def plot_arival_departure_growth():
 
@@ -842,119 +971,6 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
             template="plotly_white"
         )
 
-        return fig
-
-    # ========================================================================
-
-    @render_plotly
-    def plot_weekly_traffic():
-        df_weekly = (
-        df_avinor
-        .filter(
-            ((pl.col("departure_airport_iata") == airport()) |
-            (pl.col("arrival_airport_iata") == airport())) &
-            (pl.col("date_time_of_departure").dt.date().is_between(
-                LAST_MONTH_AVINOR,
-                END_DATE_AVINOR
-            ))
-        )
-        .with_columns(
-            pl.col("date_time_of_departure").dt.date().alias("date")
-        )
-        .group_by("date")
-        .agg(
-            pl.count().alias("daily_flights")
-        )
-        .with_columns(
-            pl.col("date").dt.strftime("%A").alias("weekday_name"),
-            pl.col("date").dt.weekday().alias("weekday")
-        )
-        .group_by(["weekday_name", "weekday"])
-        .agg(
-            pl.col("daily_flights").mean().round(0).alias("avg_flights")
-        )
-        .sort("weekday"))
-
-        # df_weekly.write_csv("weekly.txt")
-    
-   
-        pdf = df_weekly.to_pandas()
-
-
-        fig = px.bar(
-            pdf,
-            x="weekday_name",
-            y="avg_flights",
-            title=f"Average Flights per Weekday for {LAST_MONTH_AVINOR.strftime('%B %Y')}",
-            labels={
-                "weekday_name": "Day of Week",
-                "avg_flights": "Average Flights"
-            }
-        )
-        fig.update_layout(
-            xaxis_title="Week day",
-            yaxis_title="Flights",
-            legend_title="Type",
-            paper_bgcolor="white",
-            autosize=True,
-            template="plotly_white"
-        )
-
-        return fig
-
-
-    # ========================================================================
-
-    @render_plotly
-    def plot_hourly_traffic():
-        df_hourly = (
-            df_avinor
-            .filter(
-               ( (pl.col("departure_airport_iata") == airport()) |
-                (pl.col("arrival_airport_iata") == airport()) ) &
-                (pl.col("date_time_of_departure").dt.date().is_between(
-                    LAST_MONTH_AVINOR,
-                    END_DATE_AVINOR
-                ))
-            )
-            .with_columns([
-                pl.col("date_time_of_departure").dt.date().alias("date"),
-                pl.col("date_time_of_departure").dt.hour().alias("hour")
-            ])
-        
-            .group_by(["date", "hour"])
-            .agg(
-                pl.count().alias("hourly_flights")
-            )
-        
-            .group_by("hour")
-            .agg(
-                pl.col("hourly_flights").mean().alias("avg_flights")
-            )
-            .sort("hour")
-        )
-
-        pdf = df_hourly.to_pandas()
-
-        fig = px.line(
-            pdf,
-            x="hour",
-            y="avg_flights",
-            markers=True,
-            title=f"Average Flights per Hour of Day for {LAST_MONTH_AVINOR.strftime('%B %Y')}",
-            labels={
-                "hour": "Hour of Day",
-                "avg_flights": "Average Flights"
-            }
-        )
-        fig.update_layout(
-            autosize=True,
-            xaxis_title="Hour of Day",
-            yaxis_title="Flights",
-            legend_title="Type",
-            template="plotly_white",
-            paper_bgcolor="white"
-        )
         return fig
 
     # ========================================================================
@@ -1047,7 +1063,7 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
     def display_map():
     
         map_1 = KeplerGl(
-            height=600, 
+            height="100%",
             data={"Intra flights": df_avinor_kepler.to_pandas().dropna()},
             config=map_config
         )
@@ -1061,8 +1077,11 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
 
     def display_ssb_traffic():
 
-        html_code =pyg.to_html(df_ssb)
-        return ui.HTML(html_code)
+        html_code =pyg.to_html(df_ssb,  appearance="light")
+        return ui.div(
+            ui.HTML(html_code),
+            style="height: 100%; margin: 0; padding: 0;"
+        )
 
     # ========================================================================
 
@@ -1070,8 +1089,11 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
 
     def display_avinor():
 
-        html_code =pyg.to_html(df_avinor)
-        return ui.HTML(html_code)
+        html_code =pyg.to_html(df_avinor,  appearance="light")
+        return ui.div(
+            ui.HTML(html_code),
+            style="height: 100%; margin: 0; padding: 0;"
+        )
 
     # ========================================================================
 

@@ -15,8 +15,8 @@ def map_traffic_type(value):
     return TRAFFIC_TYPE_MAP.get(value, value)
 def map_traffic_category(value):
     return TRAFFIC_CATEGORY_MAP.get(value, value)
-SSB_PASSENGERS_FILE_PATH = '../data/ssb_passengers_new.csv'
-SSB_SEATS_FLIGHTS_FILE_PATH = '../data/ssb_seats_and_flights_new.csv'
+SSB_PASSENGERS_FILE_PATH = '../data/ssb_passengers_to_feb.csv'
+SSB_SEATS_FLIGHTS_FILE_PATH = '../data/ssb_seats_and_flights_to_feb.csv'
 
 def convert_month_year_to_date(month_year_str):
     """

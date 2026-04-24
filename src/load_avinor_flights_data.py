@@ -2,7 +2,7 @@ from services.db_connect import ps_connect
 import polars as pl
 import re
 from psycopg2.extras import execute_batch
-AVINOR_FLIGHTS_PATH = '../data/avinor_flights_new_1.csv'
+AVINOR_FLIGHTS_PATH = '../data/avinor_flights_to_dec.csv'
 
 
 def sum_seats(config_str):
