@@ -354,7 +354,7 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
         passengers_data = passengers_data.asfreq("MS")    
 
         # EXOGENOUS VARIABLES FOR SARIMA MODEL (SEATS ) AND FREQUENCY TO MONTHLY
-        exog_data = df.select(["date", "seats"]).to_pandas().set_index("date")
+        exog_data = df.select(["date", "flights"]).to_pandas().set_index("date")
         exog_data = exog_data.sort_index().asfreq("MS")
 
         # result = adfuller(passengers_data)
@@ -412,7 +412,7 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
                 "date_pred": "date"
             }))
             # PREPARE EXOGENOUS VARIABLES FOR FORECAST (SET DATE AS INDEX AND FREQUENCY TO MONTHLY)
-            exog_future = future_values.select(["date", "seats"]).to_pandas().set_index("date")
+            exog_future = future_values.select(["date", "flights"]).to_pandas().set_index("date")
             exog_future = exog_future.sort_index().asfreq("MS")
 
             if model_result is None:
@@ -909,9 +909,11 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
 
     # ========================================================================
 
+    # THIS PLOT SHOW DIFFERANCE BETBEEN NUMBER OF ARRIVAL AND DEPARTURE
+    # ARRIVAL - DEPARTURE
     @render_plotly
     def plot_arival_departure_growth():
-
+     
 
         df = (
             ssb_for_last_year()
@@ -956,13 +958,13 @@ def server(input: Inputs, output: Outputs, session: Session) -> None:
                     "jul","aug","sep","oct","nov","dec"
                 ]
             },
-            title="Arrival - Departure Passenger Difference"
+            title=f"Arrival - Departure Passenger Difference for {LAST_YEAR_SSB.year}"
         )
         fig.add_hline(
-        y=0,
-        line_dash="dash",
-        line_color="red",
-        line_width=2
+            y=0,
+            line_dash="dash",
+            line_color="red",
+            line_width=2
         )
         fig.update_layout(
             autosize=True,
